@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -13,11 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     // 添加子页面
     ui->stackedWidget->addWidget(p1);
-    qDebug() << "current index:" << ui->stackedWidget->count();
     ui->stackedWidget->addWidget(p2);
-    qDebug() << "current index:" << ui->stackedWidget->count();
     ui->stackedWidget->addWidget(p3);
-    qDebug() << "current index:" << ui->stackedWidget->count();
+    // qDebug() << "current index:" << ui->stackedWidget->count();
 
     // 设置当前页面
     ui->stackedWidget->setCurrentWidget(p1);

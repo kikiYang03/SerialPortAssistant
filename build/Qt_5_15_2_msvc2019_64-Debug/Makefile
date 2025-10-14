@@ -252,8 +252,8 @@ Makefile: ..\..\luaPort1.pro D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\win32-msvc
 		D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\resolve_config.prf \
 		D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\exclusive_builds_post.prf \
 		D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\default_post.prf \
-		D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qml_debug.prf \
 		D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\precompile_header.prf \
+		D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qml_debug.prf \
 		D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\warn_on.prf \
 		D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qt.prf \
 		D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\resources_functions.prf \
@@ -449,8 +449,8 @@ D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\win32\default_pre.prf:
 D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\resolve_config.prf:
 D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\exclusive_builds_post.prf:
 D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\default_post.prf:
-D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qml_debug.prf:
 D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\precompile_header.prf:
+D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qml_debug.prf:
 D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\warn_on.prf:
 D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qt.prf:
 D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\resources_functions.prf:
@@ -485,6 +485,7 @@ qmake_all: FORCE
 make_first: debug-make_first release-make_first  FORCE
 all: debug-all release-all  FORCE
 clean: debug-clean release-clean  FORCE
+	-$(DEL_FILE) luaPort1_pch.pch
 	-$(DEL_FILE) luaPort1.vc.pdb
 	-$(DEL_FILE) luaPort1.ilk
 	-$(DEL_FILE) luaPort1.idb

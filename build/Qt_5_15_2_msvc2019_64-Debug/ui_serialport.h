@@ -28,7 +28,7 @@ class Ui_SerialPort
 public:
     QGroupBox *groupBox;
     QLabel *lblPortState;
-    QWidget *widget;
+    QWidget *layoutWidget;
     QVBoxLayout *verticalLayout_2;
     QHBoxLayout *horizontalLayout;
     QLabel *label;
@@ -40,14 +40,11 @@ public:
     QScrollArea *scrollArea;
     QWidget *scrollAreaWidgetContents;
     QTextBrowser *recvEdit;
-    QPushButton *clearBt_2;
-    QPushButton *clearBt;
+    QPushButton *clearRecvBt;
+    QLabel *recvNum;
     QGroupBox *groupBox_4;
-    QScrollArea *scrollArea_2;
-    QWidget *scrollAreaWidgetContents_2;
-    QTextBrowser *sendEdit;
     QPushButton *sendBt;
-    QPushButton *btnClearSend;
+    QLabel *sendNum;
 
     void setupUi(QWidget *SerialPort)
     {
@@ -59,21 +56,21 @@ public:
         groupBox->setGeometry(QRect(579, 10, 201, 201));
         lblPortState = new QLabel(groupBox);
         lblPortState->setObjectName(QString::fromUtf8("lblPortState"));
-        lblPortState->setGeometry(QRect(20, 20, 161, 16));
-        widget = new QWidget(groupBox);
-        widget->setObjectName(QString::fromUtf8("widget"));
-        widget->setGeometry(QRect(20, 50, 161, 131));
-        verticalLayout_2 = new QVBoxLayout(widget);
+        lblPortState->setGeometry(QRect(20, 30, 161, 16));
+        layoutWidget = new QWidget(groupBox);
+        layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
+        layoutWidget->setGeometry(QRect(20, 50, 161, 131));
+        verticalLayout_2 = new QVBoxLayout(layoutWidget);
         verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
         verticalLayout_2->setContentsMargins(0, 0, 0, 0);
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        label = new QLabel(widget);
+        label = new QLabel(layoutWidget);
         label->setObjectName(QString::fromUtf8("label"));
 
         horizontalLayout->addWidget(label);
 
-        portNames = new QComboBox(widget);
+        portNames = new QComboBox(layoutWidget);
         portNames->setObjectName(QString::fromUtf8("portNames"));
 
         horizontalLayout->addWidget(portNames);
@@ -83,12 +80,12 @@ public:
 
         verticalLayout = new QVBoxLayout();
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        portSearchBt = new QPushButton(widget);
+        portSearchBt = new QPushButton(layoutWidget);
         portSearchBt->setObjectName(QString::fromUtf8("portSearchBt"));
 
         verticalLayout->addWidget(portSearchBt);
 
-        portOpenBt = new QPushButton(widget);
+        portOpenBt = new QPushButton(layoutWidget);
         portOpenBt->setObjectName(QString::fromUtf8("portOpenBt"));
 
         verticalLayout->addWidget(portOpenBt);
@@ -110,32 +107,23 @@ public:
         recvEdit->setObjectName(QString::fromUtf8("recvEdit"));
         recvEdit->setGeometry(QRect(0, 0, 501, 241));
         scrollArea->setWidget(scrollAreaWidgetContents);
-        clearBt_2 = new QPushButton(groupBox_3);
-        clearBt_2->setObjectName(QString::fromUtf8("clearBt_2"));
-        clearBt_2->setGeometry(QRect(340, 280, 81, 23));
-        clearBt = new QPushButton(groupBox_3);
-        clearBt->setObjectName(QString::fromUtf8("clearBt"));
-        clearBt->setGeometry(QRect(440, 280, 81, 23));
+        clearRecvBt = new QPushButton(groupBox_3);
+        clearRecvBt->setObjectName(QString::fromUtf8("clearRecvBt"));
+        clearRecvBt->setGeometry(QRect(440, 280, 81, 23));
+        recvNum = new QLabel(groupBox_3);
+        recvNum->setObjectName(QString::fromUtf8("recvNum"));
+        recvNum->setGeometry(QRect(10, 280, 151, 20));
+        recvNum->setStyleSheet(QString::fromUtf8("font: 10pt \"Microsoft YaHei UI\";"));
         groupBox_4 = new QGroupBox(SerialPort);
         groupBox_4->setObjectName(QString::fromUtf8("groupBox_4"));
         groupBox_4->setGeometry(QRect(20, 350, 541, 171));
-        scrollArea_2 = new QScrollArea(groupBox_4);
-        scrollArea_2->setObjectName(QString::fromUtf8("scrollArea_2"));
-        scrollArea_2->setGeometry(QRect(20, 30, 501, 91));
-        scrollArea_2->setWidgetResizable(true);
-        scrollAreaWidgetContents_2 = new QWidget();
-        scrollAreaWidgetContents_2->setObjectName(QString::fromUtf8("scrollAreaWidgetContents_2"));
-        scrollAreaWidgetContents_2->setGeometry(QRect(0, 0, 499, 89));
-        sendEdit = new QTextBrowser(scrollAreaWidgetContents_2);
-        sendEdit->setObjectName(QString::fromUtf8("sendEdit"));
-        sendEdit->setGeometry(QRect(0, 0, 501, 192));
-        scrollArea_2->setWidget(scrollAreaWidgetContents_2);
         sendBt = new QPushButton(groupBox_4);
         sendBt->setObjectName(QString::fromUtf8("sendBt"));
-        sendBt->setGeometry(QRect(340, 130, 81, 23));
-        btnClearSend = new QPushButton(groupBox_4);
-        btnClearSend->setObjectName(QString::fromUtf8("btnClearSend"));
-        btnClearSend->setGeometry(QRect(440, 130, 81, 23));
+        sendBt->setGeometry(QRect(200, 60, 121, 41));
+        sendNum = new QLabel(groupBox_4);
+        sendNum->setObjectName(QString::fromUtf8("sendNum"));
+        sendNum->setGeometry(QRect(10, 140, 181, 20));
+        sendNum->setStyleSheet(QString::fromUtf8("font: 10pt \"Microsoft YaHei UI\";"));
 
         retranslateUi(SerialPort);
 
@@ -146,16 +134,16 @@ public:
     {
         SerialPort->setWindowTitle(QCoreApplication::translate("SerialPort", "Form", nullptr));
         groupBox->setTitle(QCoreApplication::translate("SerialPort", "\344\270\262\345\217\243\351\200\211\346\213\251", nullptr));
-        lblPortState->setText(QCoreApplication::translate("SerialPort", "Waiting Connect", nullptr));
+        lblPortState->setText(QCoreApplication::translate("SerialPort", "\347\255\211\345\276\205\344\270\262\345\217\243\351\223\276\346\216\245", nullptr));
         label->setText(QCoreApplication::translate("SerialPort", "\347\253\257 \345\217\243", nullptr));
         portSearchBt->setText(QCoreApplication::translate("SerialPort", "\346\243\200\346\265\213\344\270\262\345\217\243", nullptr));
         portOpenBt->setText(QCoreApplication::translate("SerialPort", "\346\211\223\345\274\200\344\270\262\345\217\243", nullptr));
         groupBox_3->setTitle(QCoreApplication::translate("SerialPort", "\351\200\232\344\277\241\346\227\245\345\277\227", nullptr));
-        clearBt_2->setText(QCoreApplication::translate("SerialPort", "\345\217\221\351\200\201", nullptr));
-        clearBt->setText(QCoreApplication::translate("SerialPort", "\346\270\205\347\251\272\345\206\205\345\256\271", nullptr));
+        clearRecvBt->setText(QCoreApplication::translate("SerialPort", "\346\270\205\347\251\272\345\206\205\345\256\271", nullptr));
+        recvNum->setText(QCoreApplication::translate("SerialPort", "\346\216\245\346\224\266\345\255\227\350\212\202\346\225\260\351\207\217\357\274\2320", nullptr));
         groupBox_4->setTitle(QCoreApplication::translate("SerialPort", "\345\217\221\351\200\201", nullptr));
-        sendBt->setText(QCoreApplication::translate("SerialPort", "\345\217\221\351\200\201", nullptr));
-        btnClearSend->setText(QCoreApplication::translate("SerialPort", "\346\270\205\347\251\272\345\206\205\345\256\271", nullptr));
+        sendBt->setText(QCoreApplication::translate("SerialPort", "\345\217\221\351\200\201\346\265\213\350\257\225\346\225\260\346\215\256", nullptr));
+        sendNum->setText(QCoreApplication::translate("SerialPort", "\345\217\221\351\200\201\345\255\227\350\212\202\346\225\260\351\207\217\357\274\2320", nullptr));
     } // retranslateUi
 
 };
