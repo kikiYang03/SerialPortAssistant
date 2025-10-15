@@ -54,7 +54,8 @@ SOURCES       = ..\..\src\Coordinate\coordinate.cpp \
 		..\..\main.cpp \
 		..\..\mainwindow.cpp \
 		..\..\src\Params\params.cpp \
-		..\..\src\Serialport\serialport.cpp debug\moc_coordinate.cpp \
+		..\..\src\Serialport\serialport.cpp debug\qrc_resource.cpp \
+		debug\moc_coordinate.cpp \
 		debug\moc_mainwindow.cpp \
 		debug\moc_params.cpp \
 		debug\moc_serialport.cpp
@@ -63,6 +64,7 @@ OBJECTS       = debug\coordinate.obj \
 		debug\mainwindow.obj \
 		debug\params.obj \
 		debug\serialport.obj \
+		debug\qrc_resource.obj \
 		debug\moc_coordinate.obj \
 		debug\moc_mainwindow.obj \
 		debug\moc_params.obj \
@@ -214,7 +216,7 @@ all: Makefile.Debug  debug\luaPort1.exe
 
 debug\luaPort1.exe: D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Widgetsd.lib D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Guid.lib D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5SerialPortd.lib D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Cored.lib D:\workapp\QT\5.15.2\msvc2019_64\lib\qtmaind.lib ui_coordinate.h ui_mainwindow.h ui_params.h ui_serialport.h $(OBJECTS) 
 	$(LINKER) $(LFLAGS) /MANIFEST:embed /OUT:$(DESTDIR_TARGET) @<<
-debug\coordinate.obj debug\main.obj debug\mainwindow.obj debug\params.obj debug\serialport.obj debug\moc_coordinate.obj debug\moc_mainwindow.obj debug\moc_params.obj debug\moc_serialport.obj debug\luaPort1_pch.obj
+debug\coordinate.obj debug\main.obj debug\mainwindow.obj debug\params.obj debug\serialport.obj debug\qrc_resource.obj debug\moc_coordinate.obj debug\moc_mainwindow.obj debug\moc_params.obj debug\moc_serialport.obj debug\luaPort1_pch.obj
 $(LIBS)
 <<
 
@@ -224,10 +226,10 @@ qmake: FORCE
 qmake_all: FORCE
 
 dist:
-	$(ZIP) luaPort1.zip $(SOURCES) $(DIST) ..\..\luaPort1.pro D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\spec_pre.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\common\angle.conf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\common\windows-desktop.conf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\win32\windows_vulkan_sdk.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\common\windows-vulkan.conf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\common\msvc-desktop.conf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\qconfig.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3danimation.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3danimation_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dcore.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dcore_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dextras.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dextras_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dinput.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dinput_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dlogic.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dlogic_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquick.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquick_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickanimation.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickanimation_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickextras.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickextras_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickinput.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickinput_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickrender.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickrender_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickscene2d.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickscene2d_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3drender.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3drender_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_accessibility_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_axbase.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_axbase_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_axcontainer.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_axcontainer_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_axserver.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_axserver_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_bluetooth.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_bluetooth_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_bootstrap_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_charts.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_charts_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_concurrent.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_concurrent_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_core.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_core_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_dbus.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_dbus_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_designer.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_designer_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_designercomponents_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_devicediscovery_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_edid_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_egl_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_eventdispatcher_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_fb_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_fontdatabase_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_gamepad.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_gamepad_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_gui.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_gui_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_help.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_help_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_location.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_location_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_multimedia.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_multimedia_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_multimediawidgets.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_multimediawidgets_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_network.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_network_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_nfc.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_nfc_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_opengl.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_opengl_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_openglextensions.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_openglextensions_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_packetprotocol_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_platformcompositor_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_positioning.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_positioning_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_positioningquick.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_positioningquick_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_printsupport.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_printsupport_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qml.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qml_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmldebug_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmldevtools_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmlmodels.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmlmodels_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmltest.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmltest_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmlworkerscript.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmlworkerscript_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quick.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quick_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quickcontrols2.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quickcontrols2_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quickparticles_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quickshapes_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quicktemplates2.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quicktemplates2_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quickwidgets.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quickwidgets_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_remoteobjects.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_remoteobjects_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_repparser.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_repparser_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_scxml.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_scxml_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_sensors.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_sensors_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_serialbus.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_serialbus_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_serialport.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_serialport_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_sql.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_sql_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_svg.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_svg_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_testlib.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_testlib_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_texttospeech.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_texttospeech_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_theme_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_uiplugin.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_uitools.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_uitools_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_vulkan_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webchannel.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webchannel_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webengine.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webengine_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webenginecore.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webenginecore_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webenginecoreheaders_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webenginewidgets.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webenginewidgets_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_websockets.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_websockets_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webview.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webview_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_widgets.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_widgets_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_windowsuiautomation_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_winextras.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_winextras_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_xml.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_xml_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_xmlpatterns.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_xmlpatterns_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_zlib_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qt_functions.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qt_config.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\win32-msvc\qmake.conf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\spec_post.prf .qmake.stash D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\exclusive_builds.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\common\msvc-version.conf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\toolchain.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\default_pre.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\win32\default_pre.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\resolve_config.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\exclusive_builds_post.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\default_post.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\build_pass.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\precompile_header.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qml_debug.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\warn_on.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qt.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\resources_functions.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\resources.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\moc.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\win32\opengl.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\uic.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qmake_use.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\file_copies.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\win32\windows.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\testcase_targets.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\exceptions.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\yacc.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\lex.prf ..\..\luaPort1.pro D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Widgetsd.prl D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Guid.prl D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5SerialPortd.prl D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Cored.prl D:\workapp\QT\5.15.2\msvc2019_64\lib\qtmaind.prl    D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\data\dummy.cpp ..\..\src\Coordinate\coordinate.h ..\..\mainwindow.h ..\..\src\Params\params.h ..\..\src\Serialport\serialport.h ..\..\stdafx.h  ..\..\src\Coordinate\coordinate.cpp ..\..\main.cpp ..\..\mainwindow.cpp ..\..\src\Params\params.cpp ..\..\src\Serialport\serialport.cpp ..\..\src\Coordinate\coordinate.ui ..\..\mainwindow.ui ..\..\src\Params\params.ui ..\..\src\Serialport\serialport.ui    
+	$(ZIP) luaPort1.zip $(SOURCES) $(DIST) ..\..\..\..\luaPort1.pro D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\spec_pre.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\common\angle.conf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\common\windows-desktop.conf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\win32\windows_vulkan_sdk.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\common\windows-vulkan.conf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\common\msvc-desktop.conf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\qconfig.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3danimation.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3danimation_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dcore.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dcore_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dextras.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dextras_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dinput.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dinput_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dlogic.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dlogic_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquick.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquick_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickanimation.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickanimation_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickextras.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickextras_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickinput.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickinput_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickrender.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickrender_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickscene2d.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3dquickscene2d_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3drender.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_3drender_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_accessibility_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_axbase.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_axbase_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_axcontainer.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_axcontainer_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_axserver.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_axserver_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_bluetooth.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_bluetooth_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_bootstrap_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_charts.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_charts_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_concurrent.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_concurrent_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_core.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_core_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_dbus.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_dbus_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_designer.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_designer_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_designercomponents_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_devicediscovery_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_edid_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_egl_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_eventdispatcher_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_fb_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_fontdatabase_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_gamepad.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_gamepad_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_gui.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_gui_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_help.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_help_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_location.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_location_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_multimedia.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_multimedia_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_multimediawidgets.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_multimediawidgets_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_network.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_network_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_nfc.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_nfc_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_opengl.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_opengl_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_openglextensions.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_openglextensions_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_packetprotocol_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_platformcompositor_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_positioning.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_positioning_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_positioningquick.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_positioningquick_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_printsupport.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_printsupport_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qml.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qml_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmldebug_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmldevtools_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmlmodels.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmlmodels_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmltest.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmltest_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmlworkerscript.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qmlworkerscript_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quick.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quick_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quickcontrols2.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quickcontrols2_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quickparticles_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quickshapes_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quicktemplates2.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quicktemplates2_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quickwidgets.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_quickwidgets_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_remoteobjects.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_remoteobjects_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_repparser.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_repparser_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_scxml.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_scxml_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_sensors.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_sensors_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_serialbus.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_serialbus_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_serialport.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_serialport_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_sql.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_sql_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_svg.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_svg_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_testlib.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_testlib_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_texttospeech.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_texttospeech_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_theme_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_uiplugin.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_uitools.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_uitools_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_vulkan_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webchannel.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webchannel_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webengine.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webengine_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webenginecore.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webenginecore_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webenginecoreheaders_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webenginewidgets.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webenginewidgets_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_websockets.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_websockets_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webview.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_webview_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_widgets.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_widgets_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_windowsuiautomation_support_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_winextras.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_winextras_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_xml.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_xml_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_xmlpatterns.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_xmlpatterns_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\modules\qt_lib_zlib_private.pri D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qt_functions.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qt_config.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\win32-msvc\qmake.conf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\spec_post.prf .qmake.stash D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\exclusive_builds.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\common\msvc-version.conf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\toolchain.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\default_pre.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\win32\default_pre.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\resolve_config.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\exclusive_builds_post.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\default_post.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\build_pass.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\precompile_header.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qml_debug.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\warn_on.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qt.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\resources_functions.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\resources.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\moc.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\win32\opengl.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\uic.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\qmake_use.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\file_copies.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\win32\windows.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\testcase_targets.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\exceptions.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\yacc.prf D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\lex.prf ..\..\luaPort1.pro ..\..\resource.qrc D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Widgetsd.prl D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Guid.prl D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5SerialPortd.prl D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Cored.prl D:\workapp\QT\5.15.2\msvc2019_64\lib\qtmaind.prl   ..\..\resource.qrc D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\data\dummy.cpp ..\..\src\Coordinate\coordinate.h ..\..\mainwindow.h ..\..\src\Params\params.h ..\..\src\Serialport\serialport.h ..\..\stdafx.h  ..\..\src\Coordinate\coordinate.cpp ..\..\main.cpp ..\..\mainwindow.cpp ..\..\src\Params\params.cpp ..\..\src\Serialport\serialport.cpp ..\..\src\Coordinate\coordinate.ui ..\..\mainwindow.ui ..\..\src\Params\params.ui ..\..\src\Serialport\serialport.ui    
 
 clean: compiler_clean 
-	-$(DEL_FILE) debug\coordinate.obj debug\main.obj debug\mainwindow.obj debug\params.obj debug\serialport.obj debug\moc_coordinate.obj debug\moc_mainwindow.obj debug\moc_params.obj debug\moc_serialport.obj debug\luaPort1_pch.obj
+	-$(DEL_FILE) debug\coordinate.obj debug\main.obj debug\mainwindow.obj debug\params.obj debug\serialport.obj debug\qrc_resource.obj debug\moc_coordinate.obj debug\moc_mainwindow.obj debug\moc_params.obj debug\moc_serialport.obj debug\luaPort1_pch.obj
 	-$(DEL_FILE) debug\luaPort1_pch.pch debug\luaPort1.vc.pdb debug\luaPort1.ilk debug\luaPort1.idb
 
 distclean: clean 
@@ -245,8 +247,14 @@ benchmark: first
 
 compiler_no_pch_compiler_make_all:
 compiler_no_pch_compiler_clean:
-compiler_rcc_make_all:
+compiler_rcc_make_all: debug\qrc_resource.cpp
 compiler_rcc_clean:
+	-$(DEL_FILE) debug\qrc_resource.cpp
+debug\qrc_resource.cpp: ..\..\resource.qrc \
+		D:\workapp\QT\5.15.2\msvc2019_64\bin\rcc.exe \
+		..\..\images\arrow.png
+	D:\workapp\QT\5.15.2\msvc2019_64\bin\rcc.exe -name resource ..\..\resource.qrc -o debug\qrc_resource.cpp
+
 compiler_moc_predefs_make_all: debug\moc_predefs.h
 compiler_moc_predefs_clean:
 	-$(DEL_FILE) debug\moc_predefs.h
@@ -361,6 +369,8 @@ debug\moc_coordinate.cpp: ..\..\src\Coordinate\coordinate.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qfiledevice.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qvector2d.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qtouchdevice.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\QPixmap \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QDebug \
 		debug\moc_predefs.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\bin\moc.exe
 	D:\workapp\QT\5.15.2\msvc2019_64\bin\moc.exe $(DEFINES) --compiler-flavor=msvc --include D:/2025/qt/SerialPort/luaPort1/luaPort1/build/Qt_5_15_2_msvc2019_64-Debug/debug/moc_predefs.h -ID:/workapp/QT/5.15.2/msvc2019_64/mkspecs/win32-msvc -ID:/2025/qt/SerialPort/luaPort1/luaPort1 -ID:/2025/qt/SerialPort/luaPort1/luaPort1/src/Coordinate -ID:/2025/qt/SerialPort/luaPort1/luaPort1/src/Params -ID:/2025/qt/SerialPort/luaPort1/luaPort1/src/Serialport -ID:/workapp/QT/5.15.2/msvc2019_64/include -ID:/workapp/QT/5.15.2/msvc2019_64/include/QtWidgets -ID:/workapp/QT/5.15.2/msvc2019_64/include/QtGui -ID:/workapp/QT/5.15.2/msvc2019_64/include/QtANGLE -ID:/workapp/QT/5.15.2/msvc2019_64/include/QtSerialPort -ID:/workapp/QT/5.15.2/msvc2019_64/include/QtCore -I. -ID:\workapp\visualstudio\2019\Professional\VC\Tools\MSVC\14.29.30133\ATLMFC\include -ID:\workapp\visualstudio\2019\Professional\VC\Tools\MSVC\14.29.30133\include -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwinrt" ..\..\src\Coordinate\coordinate.h -o debug\moc_coordinate.cpp
@@ -485,6 +495,7 @@ debug\moc_mainwindow.cpp: ..\..\mainwindow.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QDebug \
 		..\..\src\Coordinate\coordinate.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QWidget \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\QPixmap \
 		..\..\src\Serialport\serialport.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtSerialPort\QSerialPort \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtSerialPort\qserialport.h \
@@ -505,6 +516,7 @@ debug\moc_mainwindow.cpp: ..\..\mainwindow.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qdatetime.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QTextCodec \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qtextcodec.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QByteArray \
 		..\..\src\Params\params.h \
 		debug\moc_predefs.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\bin\moc.exe
@@ -748,6 +760,7 @@ debug\moc_serialport.cpp: ..\..\src\Serialport\serialport.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qdatetime.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QTextCodec \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qtextcodec.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QByteArray \
 		debug\moc_predefs.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\bin\moc.exe
 	D:\workapp\QT\5.15.2\msvc2019_64\bin\moc.exe $(DEFINES) --compiler-flavor=msvc --include D:/2025/qt/SerialPort/luaPort1/luaPort1/build/Qt_5_15_2_msvc2019_64-Debug/debug/moc_predefs.h -ID:/workapp/QT/5.15.2/msvc2019_64/mkspecs/win32-msvc -ID:/2025/qt/SerialPort/luaPort1/luaPort1 -ID:/2025/qt/SerialPort/luaPort1/luaPort1/src/Coordinate -ID:/2025/qt/SerialPort/luaPort1/luaPort1/src/Params -ID:/2025/qt/SerialPort/luaPort1/luaPort1/src/Serialport -ID:/workapp/QT/5.15.2/msvc2019_64/include -ID:/workapp/QT/5.15.2/msvc2019_64/include/QtWidgets -ID:/workapp/QT/5.15.2/msvc2019_64/include/QtGui -ID:/workapp/QT/5.15.2/msvc2019_64/include/QtANGLE -ID:/workapp/QT/5.15.2/msvc2019_64/include/QtSerialPort -ID:/workapp/QT/5.15.2/msvc2019_64/include/QtCore -I. -ID:\workapp\visualstudio\2019\Professional\VC\Tools\MSVC\14.29.30133\ATLMFC\include -ID:\workapp\visualstudio\2019\Professional\VC\Tools\MSVC\14.29.30133\include -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwinrt" ..\..\src\Serialport\serialport.h -o debug\moc_serialport.cpp
@@ -781,7 +794,7 @@ compiler_yacc_impl_make_all:
 compiler_yacc_impl_clean:
 compiler_lex_make_all:
 compiler_lex_clean:
-compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_uic_clean 
+compiler_clean: compiler_rcc_clean compiler_moc_predefs_clean compiler_moc_header_clean compiler_uic_clean 
 
 
 
@@ -894,7 +907,31 @@ debug\coordinate.obj: ..\..\src\Coordinate\coordinate.cpp ..\..\src\Coordinate\c
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qfiledevice.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qvector2d.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qtouchdevice.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\QPixmap \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QDebug \
 		ui_coordinate.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QVariant \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QApplication \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qapplication.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qcoreapplication.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qeventloop.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qdesktopwidget.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qguiapplication.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qinputmethod.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QPushButton \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qpushbutton.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qabstractbutton.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qicon.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\QPainter \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qpainter.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qtextoption.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qpen.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\QWheelEvent \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QtMath \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qmath.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\QMouseEvent \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QFileInfo \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qfileinfo.h \
 		debug\luaPort1_pch.obj
 
 debug\main.obj: ..\..\main.cpp ..\..\mainwindow.h \
@@ -1017,6 +1054,7 @@ debug\main.obj: ..\..\main.cpp ..\..\mainwindow.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QDebug \
 		..\..\src\Coordinate\coordinate.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QWidget \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\QPixmap \
 		..\..\src\Serialport\serialport.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtSerialPort\QSerialPort \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtSerialPort\qserialport.h \
@@ -1037,6 +1075,7 @@ debug\main.obj: ..\..\main.cpp ..\..\mainwindow.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qdatetime.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QTextCodec \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qtextcodec.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QByteArray \
 		..\..\src\Params\params.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QApplication \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qapplication.h \
@@ -1167,6 +1206,7 @@ debug\mainwindow.obj: ..\..\mainwindow.cpp ..\..\mainwindow.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QDebug \
 		..\..\src\Coordinate\coordinate.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QWidget \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\QPixmap \
 		..\..\src\Serialport\serialport.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtSerialPort\QSerialPort \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtSerialPort\qserialport.h \
@@ -1187,8 +1227,20 @@ debug\mainwindow.obj: ..\..\mainwindow.cpp ..\..\mainwindow.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qdatetime.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QTextCodec \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qtextcodec.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QByteArray \
 		..\..\src\Params\params.h \
 		ui_mainwindow.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QVariant \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QApplication \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qapplication.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qcoreapplication.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qeventloop.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qdesktopwidget.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qguiapplication.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qinputmethod.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QStackedWidget \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qstackedwidget.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qframe.h \
 		debug\luaPort1_pch.obj
 
 debug\params.obj: ..\..\src\Params\params.cpp ..\..\src\Params\params.h \
@@ -1296,6 +1348,23 @@ debug\params.obj: ..\..\src\Params\params.cpp ..\..\src\Params\params.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qvector2d.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qtouchdevice.h \
 		ui_params.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QVariant \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QApplication \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qapplication.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qcoreapplication.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qeventloop.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qdesktopwidget.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qguiapplication.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qinputmethod.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QTextEdit \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qtextedit.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qabstractscrollarea.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qframe.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qtextdocument.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qtextoption.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qtextcursor.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qtextformat.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qpen.h \
 		debug\luaPort1_pch.obj
 
 debug\serialport.obj: ..\..\src\Serialport\serialport.cpp ..\..\src\Serialport\serialport.h \
@@ -1428,8 +1497,57 @@ debug\serialport.obj: ..\..\src\Serialport\serialport.cpp ..\..\src\Serialport\s
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qdatetime.h \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QTextCodec \
 		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qtextcodec.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QByteArray \
 		ui_serialport.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QVariant \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QApplication \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qapplication.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qcoreapplication.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qeventloop.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qdesktopwidget.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qguiapplication.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qinputmethod.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QComboBox \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qcombobox.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qabstractitemdelegate.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qstyleoption.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qabstractspinbox.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qvalidator.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qregularexpression.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qslider.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qabstractslider.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qstyle.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qtabbar.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qrubberband.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qframe.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\qabstractitemmodel.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QGroupBox \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qgroupbox.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QHBoxLayout \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qboxlayout.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qlayout.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qlayoutitem.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qgridlayout.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QLabel \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qlabel.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QPushButton \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qpushbutton.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qabstractbutton.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QScrollArea \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qscrollarea.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qabstractscrollarea.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QTextBrowser \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qtextbrowser.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\qtextedit.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qtextdocument.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qtextcursor.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtGui\qtextformat.h \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QVBoxLayout \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtWidgets\QWidget \
+		D:\workapp\QT\5.15.2\msvc2019_64\include\QtCore\QDataStream \
 		debug\luaPort1_pch.obj
+
+debug\qrc_resource.obj: debug\qrc_resource.cpp debug\luaPort1_pch.obj
 
 debug\moc_coordinate.obj: debug\moc_coordinate.cpp debug\luaPort1_pch.obj
 

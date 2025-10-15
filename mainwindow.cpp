@@ -7,18 +7,18 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     // 实例化页面
-    p1 = new SerialPort;
-    p2 = new Coordinate;
-    p3 = new Params;
+    serialPort = new SerialPort;
+    coordinate = new Coordinate;
+    params = new Params;
 
     // 添加子页面
-    ui->stackedWidget->addWidget(p1);
-    ui->stackedWidget->addWidget(p2);
-    ui->stackedWidget->addWidget(p3);
+    ui->stackedWidget->addWidget(serialPort);
+    ui->stackedWidget->addWidget(coordinate);
+    ui->stackedWidget->addWidget(params);
     // qDebug() << "current index:" << ui->stackedWidget->count();
 
     // 设置当前页面
-    ui->stackedWidget->setCurrentWidget(p1);
+    ui->stackedWidget->setCurrentWidget(serialPort);
 
     // 隐藏菜单栏上的右击菜单
     this->setContextMenuPolicy(Qt::NoContextMenu);
@@ -66,6 +66,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ReadAction,&QAction::triggered,this,[=](){
         ui->stackedWidget->setCurrentIndex(2);
     });
+
+    connect(serialPort, &SerialPort::coordinatesUpdated,
+            coordinate, &Coordinate::updateCoordinates);
 }
 
 MainWindow::~MainWindow()

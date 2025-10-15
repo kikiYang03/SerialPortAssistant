@@ -119,7 +119,7 @@ public:
         groupBox_4->setGeometry(QRect(20, 350, 541, 171));
         sendBt = new QPushButton(groupBox_4);
         sendBt->setObjectName(QString::fromUtf8("sendBt"));
-        sendBt->setGeometry(QRect(200, 60, 121, 41));
+        sendBt->setGeometry(QRect(170, 60, 191, 41));
         sendNum = new QLabel(groupBox_4);
         sendNum->setObjectName(QString::fromUtf8("sendNum"));
         sendNum->setGeometry(QRect(10, 140, 181, 20));

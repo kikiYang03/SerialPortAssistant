@@ -24,8 +24,8 @@ class Ui_MainWindow
 public:
     QWidget *centralwidget;
     QStackedWidget *stackedWidget;
-    QMenuBar *menubar;
     QStatusBar *statusbar;
+    QMenuBar *menubar;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -36,15 +36,15 @@ public:
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         stackedWidget = new QStackedWidget(centralwidget);
         stackedWidget->setObjectName(QString::fromUtf8("stackedWidget"));
-        stackedWidget->setGeometry(QRect(0, 21, 800, 559));
+        stackedWidget->setGeometry(QRect(0, -1, 800, 581));
         MainWindow->setCentralWidget(centralwidget);
-        menubar = new QMenuBar(MainWindow);
-        menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 800, 21));
-        MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
         MainWindow->setStatusBar(statusbar);
+        menubar = new QMenuBar(MainWindow);
+        menubar->setObjectName(QString::fromUtf8("menubar"));
+        menubar->setGeometry(QRect(0, 0, 800, 25));
+        MainWindow->setMenuBar(menubar);
 
         retranslateUi(MainWindow);
 

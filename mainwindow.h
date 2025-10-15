@@ -27,9 +27,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    SerialPort * p1;
-    Coordinate * p2;
-    Params * p3;
+    SerialPort * serialPort;
+    Coordinate * coordinate;
+    Params * params;
 
 
 private:

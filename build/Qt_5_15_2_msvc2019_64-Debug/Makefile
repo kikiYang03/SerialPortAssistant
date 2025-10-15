@@ -275,6 +275,7 @@ Makefile: ..\..\luaPort1.pro D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\win32-msvc
 		D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Core.prl \
 		D:\workapp\QT\5.15.2\msvc2019_64\lib\qtmain.prl \
 		D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\build_pass.prf \
+		..\..\resource.qrc \
 		D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Widgetsd.prl \
 		D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Guid.prl \
 		D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5SerialPortd.prl \
@@ -472,6 +473,7 @@ D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5SerialPort.prl:
 D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Core.prl:
 D:\workapp\QT\5.15.2\msvc2019_64\lib\qtmain.prl:
 D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\build_pass.prf:
+..\..\resource.qrc:
 D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Widgetsd.prl:
 D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Guid.prl:
 D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5SerialPortd.prl:
