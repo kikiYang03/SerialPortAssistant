@@ -31,6 +31,7 @@ HEADERS += \
     stdafx.h
 
 FORMS += \
+    form.ui \
     src/Coordinate/coordinate.ui \
     mainwindow.ui \
     src/Params/params.ui \
