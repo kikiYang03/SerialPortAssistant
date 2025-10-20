@@ -272,6 +272,7 @@ Makefile: ..\..\luaPort1.pro D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\win32-msvc
 		D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Widgets.prl \
 		D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Gui.prl \
 		D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5SerialPort.prl \
+		D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Network.prl \
 		D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Core.prl \
 		D:\workapp\QT\5.15.2\msvc2019_64\lib\qtmain.prl \
 		D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\build_pass.prf \
@@ -279,6 +280,7 @@ Makefile: ..\..\luaPort1.pro D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\win32-msvc
 		D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Widgetsd.prl \
 		D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Guid.prl \
 		D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5SerialPortd.prl \
+		D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Networkd.prl \
 		D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Cored.prl \
 		D:\workapp\QT\5.15.2\msvc2019_64\lib\qtmaind.prl
 	$(QMAKE) -o Makefile ..\..\luaPort1.pro -spec win32-msvc "CONFIG+=debug" "CONFIG+=qml_debug"
@@ -470,6 +472,7 @@ D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\lex.prf:
 D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Widgets.prl:
 D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Gui.prl:
 D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5SerialPort.prl:
+D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Network.prl:
 D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Core.prl:
 D:\workapp\QT\5.15.2\msvc2019_64\lib\qtmain.prl:
 D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\build_pass.prf:
@@ -477,6 +480,7 @@ D:\workapp\QT\5.15.2\msvc2019_64\mkspecs\features\build_pass.prf:
 D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Widgetsd.prl:
 D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Guid.prl:
 D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5SerialPortd.prl:
+D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Networkd.prl:
 D:\workapp\QT\5.15.2\msvc2019_64\lib\Qt5Cored.prl:
 D:\workapp\QT\5.15.2\msvc2019_64\lib\qtmaind.prl:
 qmake: FORCE

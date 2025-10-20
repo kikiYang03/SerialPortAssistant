@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_SerialPort_t {
-    QByteArrayData data[13];
-    char stringdata0[179];
+    QByteArrayData data[19];
+    char stringdata0[282];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -44,14 +44,22 @@ QT_MOC_LITERAL(8, 65, 21), // "on_portOpenBt_clicked"
 QT_MOC_LITERAL(9, 87, 26), // "manual_serialPortReadyRead"
 QT_MOC_LITERAL(10, 114, 22), // "on_clearRecvBt_clicked"
 QT_MOC_LITERAL(11, 137, 17), // "on_sendBt_clicked"
-QT_MOC_LITERAL(12, 155, 23) // "on_btnClearSend_clicked"
+QT_MOC_LITERAL(12, 155, 23), // "on_btnClearSend_clicked"
+QT_MOC_LITERAL(13, 179, 12), // "tcpReadyRead"
+QT_MOC_LITERAL(14, 192, 16), // "tcpErrorOccurred"
+QT_MOC_LITERAL(15, 209, 28), // "QAbstractSocket::SocketError"
+QT_MOC_LITERAL(16, 238, 5), // "error"
+QT_MOC_LITERAL(17, 244, 12), // "udpReadyRead"
+QT_MOC_LITERAL(18, 257, 24) // "on_wifiConnectBt_clicked"
 
     },
     "SerialPort\0coordinatesUpdated\0\0x\0y\0z\0"
     "yaw\0on_portSearchBt_clicked\0"
     "on_portOpenBt_clicked\0manual_serialPortReadyRead\0"
     "on_clearRecvBt_clicked\0on_sendBt_clicked\0"
-    "on_btnClearSend_clicked"
+    "on_btnClearSend_clicked\0tcpReadyRead\0"
+    "tcpErrorOccurred\0QAbstractSocket::SocketError\0"
+    "error\0udpReadyRead\0on_wifiConnectBt_clicked"
 };
 #undef QT_MOC_LITERAL
 
@@ -61,7 +69,7 @@ static const uint qt_meta_data_SerialPort[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       7,   14, // methods
+      11,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -69,15 +77,19 @@ static const uint qt_meta_data_SerialPort[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    4,   49,    2, 0x06 /* Public */,
+       1,    4,   69,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       7,    0,   58,    2, 0x08 /* Private */,
-       8,    0,   59,    2, 0x08 /* Private */,
-       9,    0,   60,    2, 0x08 /* Private */,
-      10,    0,   61,    2, 0x08 /* Private */,
-      11,    0,   62,    2, 0x08 /* Private */,
-      12,    0,   63,    2, 0x08 /* Private */,
+       7,    0,   78,    2, 0x08 /* Private */,
+       8,    0,   79,    2, 0x08 /* Private */,
+       9,    0,   80,    2, 0x08 /* Private */,
+      10,    0,   81,    2, 0x08 /* Private */,
+      11,    0,   82,    2, 0x08 /* Private */,
+      12,    0,   83,    2, 0x08 /* Private */,
+      13,    0,   84,    2, 0x08 /* Private */,
+      14,    1,   85,    2, 0x08 /* Private */,
+      17,    0,   88,    2, 0x08 /* Private */,
+      18,    0,   89,    2, 0x08 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Short, QMetaType::Short, QMetaType::Short, QMetaType::Short,    3,    4,    5,    6,
@@ -87,6 +99,10 @@ static const uint qt_meta_data_SerialPort[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 15,   16,
     QMetaType::Void,
     QMetaType::Void,
 
@@ -106,7 +122,22 @@ void SerialPort::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 4: _t->on_clearRecvBt_clicked(); break;
         case 5: _t->on_sendBt_clicked(); break;
         case 6: _t->on_btnClearSend_clicked(); break;
+        case 7: _t->tcpReadyRead(); break;
+        case 8: _t->tcpErrorOccurred((*reinterpret_cast< QAbstractSocket::SocketError(*)>(_a[1]))); break;
+        case 9: _t->udpReadyRead(); break;
+        case 10: _t->on_wifiConnectBt_clicked(); break;
         default: ;
+        }
+    } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
+        switch (_id) {
+        default: *reinterpret_cast<int*>(_a[0]) = -1; break;
+        case 8:
+            switch (*reinterpret_cast<int*>(_a[1])) {
+            default: *reinterpret_cast<int*>(_a[0]) = -1; break;
+            case 0:
+                *reinterpret_cast<int*>(_a[0]) = qRegisterMetaType< QAbstractSocket::SocketError >(); break;
+            }
+            break;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
@@ -149,13 +180,13 @@ int SerialPort::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 7)
+        if (_id < 11)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 7;
+        _id -= 11;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 7)
-            *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 7;
+        if (_id < 11)
+            qt_static_metacall(this, _c, _id, _a);
+        _id -= 11;
     }
     return _id;
 }

@@ -12,7 +12,6 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
-#include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
@@ -28,25 +27,7 @@ QT_BEGIN_NAMESPACE
 class Ui_SerialPort
 {
 public:
-    QWidget *widget;
-    QVBoxLayout *verticalLayout_14;
-    QWidget *widget1;
-    QVBoxLayout *verticalLayout_15;
-    QWidget *widget2;
-    QVBoxLayout *verticalLayout_17;
     QGridLayout *gridLayout;
-    QVBoxLayout *verticalLayout_25;
-    QGroupBox *groupBox;
-    QVBoxLayout *verticalLayout_24;
-    QLabel *lblPortState;
-    QVBoxLayout *verticalLayout_2;
-    QHBoxLayout *horizontalLayout;
-    QLabel *label;
-    QComboBox *portNames;
-    QVBoxLayout *verticalLayout;
-    QPushButton *portSearchBt;
-    QPushButton *portOpenBt;
-    QFrame *frame;
     QVBoxLayout *verticalLayout_23;
     QGroupBox *groupBox_3;
     QVBoxLayout *verticalLayout_21;
@@ -70,92 +51,32 @@ public:
     QLabel *sendNum;
     QLabel *label_24;
     QLabel *label_25;
-    QVBoxLayout *verticalLayout_20;
+    QVBoxLayout *verticalLayout_25;
+    QGroupBox *serialBox;
+    QVBoxLayout *verticalLayout_24;
+    QLabel *lblPortState;
+    QVBoxLayout *verticalLayout_2;
+    QHBoxLayout *horizontalLayout;
+    QLabel *label;
+    QComboBox *portNames;
+    QVBoxLayout *verticalLayout;
+    QPushButton *portSearchBt;
+    QPushButton *portOpenBt;
+    QGroupBox *wifiBox;
+    QLabel *lblWifiState;
+    QWidget *widget;
+    QVBoxLayout *verticalLayout_3;
+    QLabel *label_2;
+    QComboBox *protocolComboBox;
+    QPushButton *wifiConnectBt;
 
     void setupUi(QWidget *SerialPort)
     {
         if (SerialPort->objectName().isEmpty())
             SerialPort->setObjectName(QString::fromUtf8("SerialPort"));
         SerialPort->resize(1064, 565);
-        widget = new QWidget(SerialPort);
-        widget->setObjectName(QString::fromUtf8("widget"));
-        widget->setGeometry(QRect(0, 0, 2, 2));
-        verticalLayout_14 = new QVBoxLayout(widget);
-        verticalLayout_14->setObjectName(QString::fromUtf8("verticalLayout_14"));
-        verticalLayout_14->setContentsMargins(0, 0, 0, 0);
-        widget1 = new QWidget(SerialPort);
-        widget1->setObjectName(QString::fromUtf8("widget1"));
-        widget1->setGeometry(QRect(0, 0, 2, 2));
-        verticalLayout_15 = new QVBoxLayout(widget1);
-        verticalLayout_15->setObjectName(QString::fromUtf8("verticalLayout_15"));
-        verticalLayout_15->setContentsMargins(0, 0, 0, 0);
-        widget2 = new QWidget(SerialPort);
-        widget2->setObjectName(QString::fromUtf8("widget2"));
-        widget2->setGeometry(QRect(0, 0, 2, 2));
-        verticalLayout_17 = new QVBoxLayout(widget2);
-        verticalLayout_17->setObjectName(QString::fromUtf8("verticalLayout_17"));
-        verticalLayout_17->setContentsMargins(0, 0, 0, 0);
         gridLayout = new QGridLayout(SerialPort);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-        verticalLayout_25 = new QVBoxLayout();
-        verticalLayout_25->setObjectName(QString::fromUtf8("verticalLayout_25"));
-        groupBox = new QGroupBox(SerialPort);
-        groupBox->setObjectName(QString::fromUtf8("groupBox"));
-        verticalLayout_24 = new QVBoxLayout(groupBox);
-        verticalLayout_24->setObjectName(QString::fromUtf8("verticalLayout_24"));
-        lblPortState = new QLabel(groupBox);
-        lblPortState->setObjectName(QString::fromUtf8("lblPortState"));
-
-        verticalLayout_24->addWidget(lblPortState);
-
-        verticalLayout_2 = new QVBoxLayout();
-        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
-        horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        label = new QLabel(groupBox);
-        label->setObjectName(QString::fromUtf8("label"));
-
-        horizontalLayout->addWidget(label);
-
-        portNames = new QComboBox(groupBox);
-        portNames->setObjectName(QString::fromUtf8("portNames"));
-
-        horizontalLayout->addWidget(portNames);
-
-
-        verticalLayout_2->addLayout(horizontalLayout);
-
-        verticalLayout = new QVBoxLayout();
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        portSearchBt = new QPushButton(groupBox);
-        portSearchBt->setObjectName(QString::fromUtf8("portSearchBt"));
-
-        verticalLayout->addWidget(portSearchBt);
-
-        portOpenBt = new QPushButton(groupBox);
-        portOpenBt->setObjectName(QString::fromUtf8("portOpenBt"));
-
-        verticalLayout->addWidget(portOpenBt);
-
-
-        verticalLayout_2->addLayout(verticalLayout);
-
-
-        verticalLayout_24->addLayout(verticalLayout_2);
-
-
-        verticalLayout_25->addWidget(groupBox);
-
-        frame = new QFrame(SerialPort);
-        frame->setObjectName(QString::fromUtf8("frame"));
-        frame->setFrameShape(QFrame::StyledPanel);
-        frame->setFrameShadow(QFrame::Raised);
-
-        verticalLayout_25->addWidget(frame);
-
-
-        gridLayout->addLayout(verticalLayout_25, 1, 2, 1, 1);
-
         verticalLayout_23 = new QVBoxLayout();
         verticalLayout_23->setObjectName(QString::fromUtf8("verticalLayout_23"));
         groupBox_3 = new QGroupBox(SerialPort);
@@ -169,7 +90,7 @@ public:
         scrollArea->setWidgetResizable(true);
         scrollAreaWidgetContents = new QWidget();
         scrollAreaWidgetContents->setObjectName(QString::fromUtf8("scrollAreaWidgetContents"));
-        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 842, 336));
+        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 851, 345));
         horizontalLayout_21 = new QHBoxLayout(scrollAreaWidgetContents);
         horizontalLayout_21->setObjectName(QString::fromUtf8("horizontalLayout_21"));
         recvEdit = new QTextBrowser(scrollAreaWidgetContents);
@@ -262,12 +183,88 @@ public:
         verticalLayout_23->addWidget(groupBox_4);
 
 
-        gridLayout->addLayout(verticalLayout_23, 1, 1, 1, 1);
+        gridLayout->addLayout(verticalLayout_23, 0, 0, 1, 1);
 
-        verticalLayout_20 = new QVBoxLayout();
-        verticalLayout_20->setObjectName(QString::fromUtf8("verticalLayout_20"));
+        verticalLayout_25 = new QVBoxLayout();
+        verticalLayout_25->setObjectName(QString::fromUtf8("verticalLayout_25"));
+        serialBox = new QGroupBox(SerialPort);
+        serialBox->setObjectName(QString::fromUtf8("serialBox"));
+        verticalLayout_24 = new QVBoxLayout(serialBox);
+        verticalLayout_24->setObjectName(QString::fromUtf8("verticalLayout_24"));
+        lblPortState = new QLabel(serialBox);
+        lblPortState->setObjectName(QString::fromUtf8("lblPortState"));
 
-        gridLayout->addLayout(verticalLayout_20, 0, 0, 1, 1);
+        verticalLayout_24->addWidget(lblPortState);
+
+        verticalLayout_2 = new QVBoxLayout();
+        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        label = new QLabel(serialBox);
+        label->setObjectName(QString::fromUtf8("label"));
+
+        horizontalLayout->addWidget(label);
+
+        portNames = new QComboBox(serialBox);
+        portNames->setObjectName(QString::fromUtf8("portNames"));
+
+        horizontalLayout->addWidget(portNames);
+
+
+        verticalLayout_2->addLayout(horizontalLayout);
+
+        verticalLayout = new QVBoxLayout();
+        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        portSearchBt = new QPushButton(serialBox);
+        portSearchBt->setObjectName(QString::fromUtf8("portSearchBt"));
+
+        verticalLayout->addWidget(portSearchBt);
+
+        portOpenBt = new QPushButton(serialBox);
+        portOpenBt->setObjectName(QString::fromUtf8("portOpenBt"));
+
+        verticalLayout->addWidget(portOpenBt);
+
+
+        verticalLayout_2->addLayout(verticalLayout);
+
+
+        verticalLayout_24->addLayout(verticalLayout_2);
+
+
+        verticalLayout_25->addWidget(serialBox);
+
+        wifiBox = new QGroupBox(SerialPort);
+        wifiBox->setObjectName(QString::fromUtf8("wifiBox"));
+        lblWifiState = new QLabel(wifiBox);
+        lblWifiState->setObjectName(QString::fromUtf8("lblWifiState"));
+        lblWifiState->setGeometry(QRect(20, 40, 91, 21));
+        widget = new QWidget(wifiBox);
+        widget->setObjectName(QString::fromUtf8("widget"));
+        widget->setGeometry(QRect(20, 90, 121, 121));
+        verticalLayout_3 = new QVBoxLayout(widget);
+        verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
+        verticalLayout_3->setContentsMargins(0, 0, 0, 0);
+        label_2 = new QLabel(widget);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+
+        verticalLayout_3->addWidget(label_2);
+
+        protocolComboBox = new QComboBox(widget);
+        protocolComboBox->setObjectName(QString::fromUtf8("protocolComboBox"));
+
+        verticalLayout_3->addWidget(protocolComboBox);
+
+        wifiConnectBt = new QPushButton(widget);
+        wifiConnectBt->setObjectName(QString::fromUtf8("wifiConnectBt"));
+
+        verticalLayout_3->addWidget(wifiConnectBt);
+
+
+        verticalLayout_25->addWidget(wifiBox);
+
+
+        gridLayout->addLayout(verticalLayout_25, 0, 1, 1, 1);
 
 
         retranslateUi(SerialPort);
@@ -278,11 +275,6 @@ public:
     void retranslateUi(QWidget *SerialPort)
     {
         SerialPort->setWindowTitle(QCoreApplication::translate("SerialPort", "Form", nullptr));
-        groupBox->setTitle(QCoreApplication::translate("SerialPort", "\344\270\262\345\217\243\351\200\211\346\213\251", nullptr));
-        lblPortState->setText(QCoreApplication::translate("SerialPort", "\347\255\211\345\276\205\344\270\262\345\217\243\351\223\276\346\216\245", nullptr));
-        label->setText(QCoreApplication::translate("SerialPort", "\347\253\257 \345\217\243", nullptr));
-        portSearchBt->setText(QCoreApplication::translate("SerialPort", "\346\243\200\346\265\213\344\270\262\345\217\243", nullptr));
-        portOpenBt->setText(QCoreApplication::translate("SerialPort", "\346\211\223\345\274\200\344\270\262\345\217\243", nullptr));
         groupBox_3->setTitle(QCoreApplication::translate("SerialPort", "\351\200\232\344\277\241\346\227\245\345\277\227", nullptr));
         recvNum->setText(QCoreApplication::translate("SerialPort", "\346\216\245\346\224\266\345\255\227\350\212\202\346\225\260\351\207\217\357\274\2320", nullptr));
         label_21->setText(QString());
@@ -294,6 +286,15 @@ public:
         sendNum->setText(QCoreApplication::translate("SerialPort", "\345\217\221\351\200\201\345\255\227\350\212\202\346\225\260\351\207\217\357\274\2320", nullptr));
         label_24->setText(QString());
         label_25->setText(QString());
+        serialBox->setTitle(QCoreApplication::translate("SerialPort", "\344\270\262\345\217\243\351\200\211\346\213\251", nullptr));
+        lblPortState->setText(QCoreApplication::translate("SerialPort", "\347\255\211\345\276\205\344\270\262\345\217\243\351\223\276\346\216\245", nullptr));
+        label->setText(QCoreApplication::translate("SerialPort", "\347\253\257 \345\217\243", nullptr));
+        portSearchBt->setText(QCoreApplication::translate("SerialPort", "\346\243\200\346\265\213\344\270\262\345\217\243", nullptr));
+        portOpenBt->setText(QCoreApplication::translate("SerialPort", "\346\211\223\345\274\200\344\270\262\345\217\243", nullptr));
+        wifiBox->setTitle(QCoreApplication::translate("SerialPort", "\347\275\221\347\273\234\351\200\232\344\277\241", nullptr));
+        lblWifiState->setText(QCoreApplication::translate("SerialPort", "\347\255\211\345\276\205\351\223\276\346\216\245", nullptr));
+        label_2->setText(QCoreApplication::translate("SerialPort", "\345\215\217\350\256\256\347\261\273\345\236\213:", nullptr));
+        wifiConnectBt->setText(QCoreApplication::translate("SerialPort", "\346\211\223\345\274\200\350\277\236\346\216\245", nullptr));
     } // retranslateUi
 
 };
