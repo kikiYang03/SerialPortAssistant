@@ -12,6 +12,7 @@
 #include <coordinate.h>
 #include <serialport.h>
 #include <params.h>
+#include <rosvisualizer.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -30,6 +31,7 @@ public:
     SerialPort * serialPort;
     Coordinate * coordinate;
     Params * params;
+    ROSVisualizer * visualizer;
 
 
 private:

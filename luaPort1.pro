@@ -15,27 +15,31 @@ QMAKE_CXXFLAGS += /utf-8
 INCLUDEPATH += $$PWD/src/Coordinate
 INCLUDEPATH += $$PWD/src/Params
 INCLUDEPATH += $$PWD/src/Serialport
+INCLUDEPATH += $$PWD/src/ROSVisualizer
 
 SOURCES += \
     src/Coordinate/coordinate.cpp \
     main.cpp \
     mainwindow.cpp \
     src/Params/params.cpp \
-    src/Serialport/serialport.cpp
+    src/Serialport/serialport.cpp \
+    src/ROSVisualizer/rosvisualizer.cpp
 
 HEADERS += \
     src/Coordinate/coordinate.h \
     mainwindow.h \
     src/Params/params.h \
     src/Serialport/serialport.h \
-    stdafx.h
+    stdafx.h \
+    src/ROSVisualizer/rosvisualizer.h
 
 FORMS += \
     form.ui \
     src/Coordinate/coordinate.ui \
     mainwindow.ui \
     src/Params/params.ui \
-    src/Serialport/serialport.ui
+    src/Serialport/serialport.ui \
+    src/ROSVisualizer/rosvisualizer.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

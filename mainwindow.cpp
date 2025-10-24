@@ -10,11 +10,14 @@ MainWindow::MainWindow(QWidget *parent)
     serialPort = new SerialPort;
     coordinate = new Coordinate;
     params = new Params;
+    visualizer = new ROSVisualizer;
+
 
     // 添加子页面
     ui->stackedWidget->addWidget(serialPort);
     ui->stackedWidget->addWidget(coordinate);
     ui->stackedWidget->addWidget(params);
+    ui->stackedWidget->addWidget(visualizer);
     // qDebug() << "current index:" << ui->stackedWidget->count();
 
     // 设置当前页面
@@ -39,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
     QAction *NewAction = fileMenu->addAction("串口配置");
     QAction *OpenAction = fileMenu->addAction("坐标展示");
     QAction *ReadAction = fileMenu->addAction("参数设置");
+    QAction *RosAction = fileMenu->addAction("ROS展示");
 
     // 创建工具栏
     QToolBar *toolBar = new QToolBar(this);
@@ -48,11 +52,19 @@ MainWindow::MainWindow(QWidget *parent)
     toolBar->addAction(NewAction);
     toolBar->addAction(OpenAction);
     toolBar->addAction(ReadAction);
+    toolBar->addAction(RosAction);
 
     // 设置禁止移动属性,工具栏默认贴在上方
     toolBar->setFloatable(false);
     toolBar->setMovable(false);
     toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+
+
+
+    // 连接信号
+    connect(serialPort, &SerialPort::rosMapUpdated, visualizer, &ROSVisualizer::updateMap);
+    connect(serialPort, &SerialPort::rosScanUpdated, visualizer, &ROSVisualizer::updateScan);
+    connect(serialPort, &SerialPort::rosTfUpdated, visualizer, &ROSVisualizer::updateTf);
 
     // ----------------------------------------------------------
     // 绑定槽函数——显示页面
@@ -65,6 +77,9 @@ MainWindow::MainWindow(QWidget *parent)
     });
     connect(ReadAction,&QAction::triggered,this,[=](){
         ui->stackedWidget->setCurrentIndex(2);
+    });
+    connect(RosAction,&QAction::triggered,this,[=](){
+        ui->stackedWidget->setCurrentIndex(3);
     });
 
     connect(serialPort, &SerialPort::coordinatesUpdated,

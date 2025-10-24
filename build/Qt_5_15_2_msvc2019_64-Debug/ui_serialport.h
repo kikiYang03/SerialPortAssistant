@@ -16,6 +16,7 @@
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QScrollArea>
 #include <QtWidgets/QTextBrowser>
@@ -63,8 +64,13 @@ public:
     QPushButton *portSearchBt;
     QPushButton *portOpenBt;
     QGroupBox *wifiBox;
+    QGridLayout *gridLayout_2;
+    QVBoxLayout *verticalLayout_4;
+    QLabel *label_3;
+    QLineEdit *ipInput;
+    QLabel *label_4;
+    QLineEdit *portInput;
     QLabel *lblWifiState;
-    QWidget *widget;
     QVBoxLayout *verticalLayout_3;
     QLabel *label_2;
     QComboBox *protocolComboBox;
@@ -90,7 +96,7 @@ public:
         scrollArea->setWidgetResizable(true);
         scrollAreaWidgetContents = new QWidget();
         scrollAreaWidgetContents->setObjectName(QString::fromUtf8("scrollAreaWidgetContents"));
-        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 851, 345));
+        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 810, 345));
         horizontalLayout_21 = new QHBoxLayout(scrollAreaWidgetContents);
         horizontalLayout_21->setObjectName(QString::fromUtf8("horizontalLayout_21"));
         recvEdit = new QTextBrowser(scrollAreaWidgetContents);
@@ -236,29 +242,57 @@ public:
 
         wifiBox = new QGroupBox(SerialPort);
         wifiBox->setObjectName(QString::fromUtf8("wifiBox"));
+        gridLayout_2 = new QGridLayout(wifiBox);
+        gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
+        verticalLayout_4 = new QVBoxLayout();
+        verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
+        label_3 = new QLabel(wifiBox);
+        label_3->setObjectName(QString::fromUtf8("label_3"));
+
+        verticalLayout_4->addWidget(label_3);
+
+        ipInput = new QLineEdit(wifiBox);
+        ipInput->setObjectName(QString::fromUtf8("ipInput"));
+
+        verticalLayout_4->addWidget(ipInput);
+
+        label_4 = new QLabel(wifiBox);
+        label_4->setObjectName(QString::fromUtf8("label_4"));
+
+        verticalLayout_4->addWidget(label_4);
+
+        portInput = new QLineEdit(wifiBox);
+        portInput->setObjectName(QString::fromUtf8("portInput"));
+
+        verticalLayout_4->addWidget(portInput);
+
+
+        gridLayout_2->addLayout(verticalLayout_4, 0, 0, 1, 1);
+
         lblWifiState = new QLabel(wifiBox);
         lblWifiState->setObjectName(QString::fromUtf8("lblWifiState"));
-        lblWifiState->setGeometry(QRect(20, 40, 91, 21));
-        widget = new QWidget(wifiBox);
-        widget->setObjectName(QString::fromUtf8("widget"));
-        widget->setGeometry(QRect(20, 90, 121, 121));
-        verticalLayout_3 = new QVBoxLayout(widget);
+
+        gridLayout_2->addWidget(lblWifiState, 1, 0, 1, 1);
+
+        verticalLayout_3 = new QVBoxLayout();
         verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
-        verticalLayout_3->setContentsMargins(0, 0, 0, 0);
-        label_2 = new QLabel(widget);
+        label_2 = new QLabel(wifiBox);
         label_2->setObjectName(QString::fromUtf8("label_2"));
 
         verticalLayout_3->addWidget(label_2);
 
-        protocolComboBox = new QComboBox(widget);
+        protocolComboBox = new QComboBox(wifiBox);
         protocolComboBox->setObjectName(QString::fromUtf8("protocolComboBox"));
 
         verticalLayout_3->addWidget(protocolComboBox);
 
-        wifiConnectBt = new QPushButton(widget);
+        wifiConnectBt = new QPushButton(wifiBox);
         wifiConnectBt->setObjectName(QString::fromUtf8("wifiConnectBt"));
 
         verticalLayout_3->addWidget(wifiConnectBt);
+
+
+        gridLayout_2->addLayout(verticalLayout_3, 2, 0, 1, 1);
 
 
         verticalLayout_25->addWidget(wifiBox);
@@ -266,6 +300,7 @@ public:
 
         gridLayout->addLayout(verticalLayout_25, 0, 1, 1, 1);
 
+        gridLayout->setColumnStretch(0, 7);
 
         retranslateUi(SerialPort);
 
@@ -292,6 +327,8 @@ public:
         portSearchBt->setText(QCoreApplication::translate("SerialPort", "\346\243\200\346\265\213\344\270\262\345\217\243", nullptr));
         portOpenBt->setText(QCoreApplication::translate("SerialPort", "\346\211\223\345\274\200\344\270\262\345\217\243", nullptr));
         wifiBox->setTitle(QCoreApplication::translate("SerialPort", "\347\275\221\347\273\234\351\200\232\344\277\241", nullptr));
+        label_3->setText(QCoreApplication::translate("SerialPort", "IP:", nullptr));
+        label_4->setText(QCoreApplication::translate("SerialPort", "\347\253\257\345\217\243:", nullptr));
         lblWifiState->setText(QCoreApplication::translate("SerialPort", "\347\255\211\345\276\205\351\223\276\346\216\245", nullptr));
         label_2->setText(QCoreApplication::translate("SerialPort", "\345\215\217\350\256\256\347\261\273\345\236\213:", nullptr));
         wifiConnectBt->setText(QCoreApplication::translate("SerialPort", "\346\211\223\345\274\200\350\277\236\346\216\245", nullptr));
