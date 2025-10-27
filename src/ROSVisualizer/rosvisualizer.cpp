@@ -42,6 +42,15 @@ void ROSVisualizer::setupUI()
 
     // 居中
     ui->rosVisual->centerOn(0, 0);
+
+    // 设置右侧布局固定大小
+
+    // ui->groupBox->setMinimumWidth(100);
+    // ui->groupBox_2->setMinimumWidth(100);
+    // ui->verticalSpacer->setMinimumWidth(100);
+    // 设置右侧布局固定
+    ui->horizontalLayout_5->setStretch(1,0);
+
 }
 
 

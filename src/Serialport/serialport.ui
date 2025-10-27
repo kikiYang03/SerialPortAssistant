@@ -152,7 +152,7 @@
      <item>
       <widget class="QGroupBox" name="serialBox">
        <property name="title">
-        <string>串口选择</string>
+        <string>串口通信</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_24">
         <item>
