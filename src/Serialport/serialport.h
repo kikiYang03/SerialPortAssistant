@@ -68,10 +68,17 @@ public:
 
     QSerialPort *serialPort;
 
-    // 新增：发送协议数据的公共函数
-    void sendProtocolData(qint16 x, qint16 y, qint16 z, qint16 yaw);
+    // 解析ROS数据帧
     void parseRosFrame(quint8 topicId, const QByteArray &payload);
     double quaternionToYaw(double x, double y, double z, double w);
+
+    // 添加公共访问方法以便Params类可以访问连接状态
+    bool getIsTcpConnected() const { return isTcpConnected; }
+    bool getIsUdpBound() const { return isUdpBound; }
+    bool getIsSerialPortConnected() const { return isSerialPortConnected; }
+
+    // 添加公共数据发送方法
+    void sendData(const QByteArray &data);  // 将sendData改为public
 
 protected:
     void findFreePorts();  //查找可用串口
@@ -79,28 +86,17 @@ protected:
     void sendMsg(const QString &msg); //发送消息（可保留原有功能）
 
 private slots:
+    void onTestTimeout();
+    void parseTestData(const QByteArray &frame);
     // 串口通信相关函数
     void on_portSearchBt_clicked();
     void on_portOpenBt_clicked();
-    void manual_serialPortReadyRead();
     void on_clearRecvBt_clicked();
     void on_sendBt_clicked();
     void on_btnClearSend_clicked();
 
-    // WiFi TCP相关槽函数
-    void tcpReadyRead();
-    void tcpErrorOccurred(QAbstractSocket::SocketError error);
-
-    // WiFi UDP相关槽函
-    void udpReadyRead();
-
-    // 协议切换
-    // void on_protocolComboBox_currentIndexChanged(int index);
-
+    // WiFi连接
     void on_wifiConnectBt_clicked();
-
-    // 新增：ROS解析槽
-    void parseRosData(const QByteArray& recBuf);
 
 private:
     Ui::SerialPort *ui;
@@ -111,16 +107,18 @@ private:
     // 接收数据缓冲区
     QByteArray recvBuffer;
 
-    void parseProtocolData();
+    // 测试相关变量
+    bool testFlag;
+    QTimer *testTimer;
 
-    QTimer *m_testTimer;  // 测试数据发送定时器
-    bool m_isSendingTestData;  // 是否正在发送测试数据
-    QList<QVector<qint16>> m_testDataList;  // 测试数据列表
-    int m_currentDataIndex;  // 当前发送的数据索引
-    void initTestData();
-    void sendTestData();
+    // 协议数据解析
+    void parseProtocolData(const QByteArray &data);
+    // ROS数据解析
+    void parseRosData(const QByteArray& recBuf);
+    // 数据处理
+    void processReceivedData(const QByteArray &recBuf);
 
-    // 串口链接
+    // 串口连接状态
     bool isSerialPortConnected;
 
     // WiFi通信相关
@@ -129,21 +127,22 @@ private:
     bool isTcpConnected;
     bool isUdpBound;
 
-    // 通用数据发送函数
-    void sendData(const QByteArray &data);
-    // 接收数据
-    void processReceivedData(const QByteArray &recBuf);
+    // 删除私有的sendData声明，因为已经移到public
+    // void sendData(const QByteArray &data);
 
+    // TF缓存
     QMap<QString, TFMessage::Transform> tfCache;
 
 signals:
     void coordinatesUpdated(qint16 x, qint16 y, qint16 z, qint16 yaw);
 
-    // 修正：使用自定义struct
+    // ROS数据更新信号
     void rosMapUpdated(const OccupancyGrid& map);
     void rosScanUpdated(const LaserScan& scan);
     void rosTfUpdated(const TFMessage& tf);
 
+    void parameterResponseReceived(const QByteArray &data);  // 参数响应信号
 };
+
 
 #endif // SERIALPORT_H

@@ -7,9 +7,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     // 实例化页面
-    serialPort = new SerialPort;
+    serialPort = new SerialPort();
     coordinate = new Coordinate;
-    params = new Params;
+    Params *params = new Params(nullptr, serialPort);
     visualizer = new ROSVisualizer;
 
 
@@ -84,6 +84,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(serialPort, &SerialPort::coordinatesUpdated,
             coordinate, &Coordinate::updateCoordinates);
+
+    // 连接参数响应信号
+    connect(serialPort, &SerialPort::parameterResponseReceived,
+            params, &Params::onParameterResponseReceived);
 }
 
 MainWindow::~MainWindow()
