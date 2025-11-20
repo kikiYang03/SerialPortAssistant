@@ -16,6 +16,8 @@ INCLUDEPATH += $$PWD/src/Coordinate
 INCLUDEPATH += $$PWD/src/Params
 INCLUDEPATH += $$PWD/src/Serialport
 INCLUDEPATH += $$PWD/src/ROSVisualizer
+INCLUDEPATH += $$PWD/utils/tcp
+INCLUDEPATH += $$PWD/utils/protocol
 
 SOURCES += \
     src/Coordinate/coordinate.cpp \
@@ -23,7 +25,9 @@ SOURCES += \
     mainwindow.cpp \
     src/Params/params.cpp \
     src/Serialport/serialport.cpp \
-    src/ROSVisualizer/rosvisualizer.cpp
+    src/ROSVisualizer/rosvisualizer.cpp \
+    utils/protocol/protocolhandler.cpp \
+    utils/tcp/tcpclient.cpp
 
 HEADERS += \
     src/Coordinate/coordinate.h \
@@ -31,7 +35,9 @@ HEADERS += \
     src/Params/params.h \
     src/Serialport/serialport.h \
     stdafx.h \
-    src/ROSVisualizer/rosvisualizer.h
+    src/ROSVisualizer/rosvisualizer.h \
+    utils/protocol/protocolhandler.h \
+    utils/tcp/tcpclient.h
 
 FORMS += \
     form.ui \
@@ -40,6 +46,8 @@ FORMS += \
     src/Params/params.ui \
     src/Serialport/serialport.ui \
     src/ROSVisualizer/rosvisualizer.ui
+
+RC_ICONS = images/logo256.ico
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

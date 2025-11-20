@@ -7,15 +7,15 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     // 实例化页面
-    serialPort = new SerialPort();
-    coordinate = new Coordinate;
-    Params *params = new Params(nullptr, serialPort);
+    serialPort = new SerialPort;
+    // coordinate = new Coordinate;
+    params = new Params;
     visualizer = new ROSVisualizer;
 
 
     // 添加子页面
     ui->stackedWidget->addWidget(serialPort);
-    ui->stackedWidget->addWidget(coordinate);
+    // ui->stackedWidget->addWidget(coordinate);
     ui->stackedWidget->addWidget(params);
     ui->stackedWidget->addWidget(visualizer);
     // qDebug() << "current index:" << ui->stackedWidget->count();
@@ -39,10 +39,10 @@ MainWindow::MainWindow(QWidget *parent)
     bar->setVisible(false);
 
     // 添加子菜单
-    QAction *NewAction = fileMenu->addAction("串口配置");
-    QAction *OpenAction = fileMenu->addAction("坐标展示");
+    QAction *NewAction = fileMenu->addAction("连接设置");
+    // QAction *OpenAction = fileMenu->addAction("坐标展示");
     QAction *ReadAction = fileMenu->addAction("参数设置");
-    QAction *RosAction = fileMenu->addAction("ROS展示");
+    QAction *RosAction = fileMenu->addAction("可视化");
 
     // 创建工具栏
     QToolBar *toolBar = new QToolBar(this);
@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // 将菜单项依次添加到工具栏
     toolBar->addAction(NewAction);
-    toolBar->addAction(OpenAction);
+    // toolBar->addAction(OpenAction);
     toolBar->addAction(ReadAction);
     toolBar->addAction(RosAction);
 
@@ -72,22 +72,23 @@ MainWindow::MainWindow(QWidget *parent)
     connect(NewAction,&QAction::triggered,this,[=](){
         ui->stackedWidget->setCurrentIndex(0);
     });
-    connect(OpenAction,&QAction::triggered,this,[=](){
+    // connect(OpenAction,&QAction::triggered,this,[=](){
+    //     ui->stackedWidget->setCurrentIndex(1);
+    // });
+    connect(ReadAction,&QAction::triggered,this,[=](){
         ui->stackedWidget->setCurrentIndex(1);
     });
-    connect(ReadAction,&QAction::triggered,this,[=](){
+    connect(RosAction,&QAction::triggered,this,[=](){
         ui->stackedWidget->setCurrentIndex(2);
     });
-    connect(RosAction,&QAction::triggered,this,[=](){
-        ui->stackedWidget->setCurrentIndex(3);
-    });
 
-    connect(serialPort, &SerialPort::coordinatesUpdated,
-            coordinate, &Coordinate::updateCoordinates);
+    // 连接Params的消息信号到SerialPort的显示槽
+    connect(params, &Params::appendMessage, serialPort, &SerialPort::appendMessage);
+    connect(visualizer, &ROSVisualizer::appendMessage, serialPort, &SerialPort::appendMessage);
 
-    // 连接参数响应信号
-    connect(serialPort, &SerialPort::parameterResponseReceived,
-            params, &Params::onParameterResponseReceived);
+    // // 连接参数响应信号
+    // connect(serialPort, &SerialPort::parameterResponseReceived,
+    //         params, &Params::onParameterResponseReceived);
 }
 
 MainWindow::~MainWindow()

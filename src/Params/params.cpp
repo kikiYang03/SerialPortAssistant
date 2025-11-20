@@ -1,15 +1,18 @@
 ﻿#include "params.h"
 #include "ui_params.h"
+
 #include <QHBoxLayout>
 #include <QDebug>
 
-Params::Params(QWidget *parent, SerialPort *serialPort)
+Params::Params(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Params)
     , m_isGroupFolded(false)
-    , m_serialPort(serialPort)
 {
     ui->setupUi(this);
+
+    // 初始化协议处理器
+    m_protocolHandler = new ProtocolHandler(this);
 
     // 设置表格属性
     setupTable();
@@ -17,27 +20,14 @@ Params::Params(QWidget *parent, SerialPort *serialPort)
     // 初始化参数
     setupParameters();
 
-    // 连接参数响应信号（需要在SerialPort中添加这个信号）
-    if (m_serialPort) {
-        // 注意：需要在SerialPort类中添加parameterResponseReceived信号
-        // connect(m_serialPort, &SerialPort::parameterResponseReceived,
-        //         this, &Params::onParameterResponseReceived);
-    }
+    // 连接TCP客户端的数据接收信号
+    TcpClient* tcpClient = TcpClient::getInstance();
+    connect(tcpClient, &TcpClient::dataReceived, this, &Params::onParameterResponseReceived);
 }
 
 Params::~Params()
 {
     delete ui;
-}
-
-void Params::setSerialPort(SerialPort *serialPort)
-{
-    m_serialPort = serialPort;
-    if (m_serialPort) {
-        // 连接参数响应信号
-        // connect(m_serialPort, &SerialPort::parameterResponseReceived,
-        //         this, &Params::onParameterResponseReceived);
-    }
 }
 
 void Params::setupTable()
@@ -47,18 +37,65 @@ void Params::setupTable()
     ui->tableWidget->setHorizontalHeaderLabels(QStringList() << "" << "参数ID" << "参数名称" << "参数值" << "值范围" << "说明");
 
     // 设置表格属性
-    ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
+    ui->tableWidget->horizontalHeader()->setStretchLastSection(true); // 最后一列拉伸
     ui->tableWidget->verticalHeader()->setVisible(false);
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableWidget->setAlternatingRowColors(true);
 
-    // 设置列宽
-    ui->tableWidget->setColumnWidth(0, 30);
-    ui->tableWidget->setColumnWidth(1, 80);
-    ui->tableWidget->setColumnWidth(2, 120);
-    ui->tableWidget->setColumnWidth(3, 150);
-    ui->tableWidget->setColumnWidth(4, 120);
+    // 设置列宽 - 减小列宽
+    ui->tableWidget->setColumnWidth(0, 25);    // 减小第一列宽度
+    ui->tableWidget->setColumnWidth(1, 70);    // 参数ID列
+    ui->tableWidget->setColumnWidth(2, 100);   // 参数名称列
+    ui->tableWidget->setColumnWidth(3, 120);   // 参数值列
+    ui->tableWidget->setColumnWidth(4, 100);   // 值范围列
+    // 说明列自动拉伸
+
+    // 设置自动换行和文本显示
+    ui->tableWidget->setWordWrap(true);
+    ui->tableWidget->setTextElideMode(Qt::ElideNone);
+
+    // 关键：设置行高自适应且紧凑
+    ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->tableWidget->verticalHeader()->setDefaultSectionSize(20); // 设置默认行高
+    ui->tableWidget->verticalHeader()->setMinimumSectionSize(20); // 最小行高
+
+    // 设置第一列居中对齐
+    ui->tableWidget->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter);
+
+    // 设置支持换行的样式
+    ui->tableWidget->setStyleSheet(
+        "QTableWidget {"
+        "    gridline-color: #d0d0d0;"
+        "    selection-background-color: #cde6f7;"
+        "    alternate-background-color: #fafafa;"
+        "    background-color: #ffffff;"
+        "    font-size: 20px;"
+        "}"
+        "QTableWidget::item {"
+        "    padding: 1px 2px;"
+        "    border: none;"
+        "}"
+        "QTableWidget::item:selected {"
+        "    background-color: #cde6f7;"
+        "}"
+        "QHeaderView::section {"
+        "    background-color: #f0f0f0;"
+        "    padding: 4px;"
+        "    border: 1px solid #d0d0d0;"
+        "    font-weight: bold;"
+        "}"
+        );
+
+
+    // 设置表格的间距属性
+    ui->tableWidget->setShowGrid(true);
+    ui->tableWidget->setGridStyle(Qt::SolidLine);
+
+    // 设置布局间距
+    ui->tableWidget->setContentsMargins(0, 0, 0, 0);
+
+    ui->optLabel->setStyleSheet("font-size: 10px;");
 }
 
 void Params::setupParameters()
@@ -74,13 +111,14 @@ void Params::setupParameters()
 
     QVector<Parameter> parameters = {
         {"0x00", "雷达型号", "0-1", "0=N10, 其他=N10_P", 0},
-        {"-", "雷达放置位置", "-", "-", 0},
-        {"0x01", "X坐标", "0-65535", "位置X坐标值", 0},
-        {"0x02", "Y坐标", "0-65535", "位置Y坐标值", 0},
-        {"0x03", "Z坐标", "0-65535", "位置Z坐标值", 0},
-        {"0x04", "Roll角度", "0-65535", "滚转角", 0},
-        {"0x05", "Pitch角度", "0-65535", "俯仰角", 0},
-        {"0x06", "Yaw角度", "0-65535", "偏航角", 0}
+        {"-", "雷达放置位置", "-", "雷达安装位置相对于机器人中心的位置，即tf树中：base_link->laser_link，坐标系遵循FLU（x为前，Y为左，Z为上）", 0},
+        {"0x01", "X坐标", "0-65535", "雷达位置X坐标值，单位厘米", 0},
+        {"0x02", "Y坐标", "0-65535", "雷达位置Y坐标值，单位厘米", 0},
+        {"0x03", "Z坐标", "0-65535", "雷达位置Z坐标值，单位厘米", 0},
+        {"0x04", "Roll角度", "0-360", "雷达滚转角，单位度", 0},
+        {"0x05", "Pitch角度", "0-360", "雷达俯仰角，单位度", 0},
+        {"0x06", "Yaw角度", "0-360", "雷达偏航角，单位度", 0},
+        {"0x10", "当前模式", "0-1", "0=建图模式,1=定位模式，保存地图后可以设置为定位模式，重启模块后则会调用保存的地图进行定位", 0}
     };
 
     // 设置行数
@@ -92,14 +130,24 @@ void Params::setupParameters()
 
         // 在0x01添加折叠按钮
         if (row == 1) {
+            // 创建容器widget确保按钮居中
+            QWidget *container = new QWidget();
+            QHBoxLayout *layout = new QHBoxLayout(container);
+            layout->setContentsMargins(0, 0, 0, 0);
+            layout->setAlignment(Qt::AlignCenter);
+
             QPushButton *foldButton = new QPushButton();
             foldButton->setText("−");
             foldButton->setFixedSize(20, 20);
             foldButton->setProperty("folded", false);
             connect(foldButton, &QPushButton::clicked, this, &Params::onFoldButtonClicked);
-            ui->tableWidget->setCellWidget(row, 0, foldButton);
+
+            layout->addWidget(foldButton);
+            ui->tableWidget->setCellWidget(row, 0, container);
         } else {
+            // 其他行创建空的居中对齐item
             QTableWidgetItem *emptyItem = new QTableWidgetItem();
+            emptyItem->setTextAlignment(Qt::AlignCenter);
             ui->tableWidget->setItem(row, 0, emptyItem);
         }
 
@@ -115,14 +163,25 @@ void Params::setupParameters()
         QTableWidgetItem *rangeItem = new QTableWidgetItem(param.range);
         ui->tableWidget->setItem(row, 4, rangeItem);
 
-        // 说明
+        // 说明 - 正确设置文本换行
         QTableWidgetItem *descItem = new QTableWidgetItem(param.description);
+        // 移除错误的flags设置，改用正确的方式
+        descItem->setToolTip(param.description); // 添加tooltip以便鼠标悬停时显示完整文本
         ui->tableWidget->setItem(row, 5, descItem);
 
         // 为参数值创建输入控件
         QWidget *valueWidget = createValueWidget(param.id, param.range, param.defaultValue);
         valueWidgets.append(valueWidget);
         ui->tableWidget->setCellWidget(row, 3, valueWidget);
+    }
+
+    // 设置行高自适应内容
+    ui->tableWidget->resizeRowsToContents();
+
+    // 额外优化：强制紧凑布局
+    for (int row = 0; row < ui->tableWidget->rowCount(); ++row) {
+        // 设置行高更紧凑
+        ui->tableWidget->setRowHeight(row,qMax(ui->tableWidget->rowHeight(row), 25)); // 最小行高25px
     }
 
     // 默认展开所有行
@@ -142,9 +201,17 @@ QWidget* Params::createValueWidget(const QString &id, const QString &range, int 
         comboBox->addItem("N10_P", 1);
         comboBox->setCurrentIndex(defaultValue);
         layout->addWidget(comboBox);
-    } else if(id == "-"){
+    } else if(id == "0x10"){
+        QComboBox *comboBox = new QComboBox();
+        comboBox->addItem("建图模式", 0);
+        comboBox->addItem("定位模式", 1);
+        comboBox->setCurrentIndex(defaultValue);
+        layout->addWidget(comboBox);
+    }else if(id == "-")
+    {
 
-    }else {
+    }
+    else {
         QSpinBox *spinBox = new QSpinBox();
         QStringList rangeParts = range.split("-");
         if (rangeParts.size() == 2) {
@@ -157,77 +224,35 @@ QWidget* Params::createValueWidget(const QString &id, const QString &range, int 
     return widget;
 }
 
-// 构建通信协议
-QByteArray Params::buildParameterFrame(quint8 command, const QString &paramId, int value)
-{
-    QByteArray frame;
 
-    // 帧头: AA
-    frame.append(static_cast<char>(0xAA));
-
-    // 命令类型：0x10=读取, 0x11=写入
-    frame.append(static_cast<char>(command));
-
-    // 参数ID（转换为字节）
-    bool ok;
-    quint8 paramByte = paramId.toUShort(&ok, 0); // 支持0x格式
-    if (!ok) {
-        qWarning() << "参数ID转换失败:" << paramId;
-        return QByteArray();
-    }
-    frame.append(static_cast<char>(paramByte));
-
-    // 对于写入命令，添加参数值（2字节，大端序）
-    if (command == 0x11) {
-        // 值高字节
-        frame.append(static_cast<char>((value >> 8) & 0xFF));
-        // 值低字节
-        frame.append(static_cast<char>(value & 0xFF));
-    }
-
-    // 帧尾: 0A
-    frame.append(static_cast<char>(0x0A));
-
-    return frame;
-}
-
-// 读取参数
-void Params::sendParameterReadRequest(const QString &paramId)
-{
-    if (!m_serialPort) {
-        QMessageBox::warning(this, "错误", "通信接口未初始化");
-        return;
-    }
-
-    QByteArray frame = buildParameterFrame(0x10, paramId);
-    if (frame.isEmpty()) {
-        QMessageBox::warning(this, "错误", "构建读取帧失败");
-        return;
-    }
-
-    // 使用公共的sendData方法
-    m_serialPort->sendData(frame);
-
-    qDebug() << "发送参数读取请求:" << paramId << "数据:" << frame.toHex(' ');
-}
 // 写入参数
 void Params::sendParameterWriteRequest(const QString &paramId, int value)
 {
-    if (!m_serialPort) {
-        QMessageBox::warning(this, "错误", "通信接口未初始化");
+    TcpClient* tcpClient = TcpClient::getInstance();
+
+    if (!tcpClient->isConnected()) {
+        QMessageBox::warning(this, "错误", "TCP未连接");
         return;
     }
 
-    QByteArray frame = buildParameterFrame(0x11, paramId, value);
+    bool ok;
+    quint8 paramByte = paramId.toUShort(&ok, 0);
+    if (!ok) {
+        QMessageBox::warning(this, "错误", "参数ID转换失败");
+        return;
+    }
+
+    QByteArray frame = m_protocolHandler->buildParameterFrame(ProtocolCommand::PARAM_WRITE, paramByte, value);
     if (frame.isEmpty()) {
         QMessageBox::warning(this, "错误", "构建写入帧失败");
         return;
     }
 
-    // 使用公共的sendData方法
-    m_serialPort->sendData(frame);
+    // 使用TCP客户端发送数据
+    tcpClient->sendData(frame);
 
     qDebug() << "发送参数写入请求:" << paramId << "值:" << value << "数据:" << frame.toHex(' ');
+    emit appendMessage("[用户操作] 写入参数");
 }
 // 解析参数响应帧
 void Params::parseParameterResponse(const QByteArray &data)
@@ -236,7 +261,7 @@ void Params::parseParameterResponse(const QByteArray &data)
     // 写入响应格式: AA 11 [参数ID] [值高字节] [值低字节] 0A
 
     if (data.size() != 6) {
-        qWarning() << "参数响应帧长度错误，期望6字节，实际:" << data.size();
+        // qWarning() << "参数响应帧长度错误，期望6字节，实际:" << data.size();
         return;
     }
 
@@ -292,55 +317,114 @@ void Params::parseParameterResponse(const QByteArray &data)
 
 void Params::onParameterResponseReceived(const QByteArray &data)
 {
-    parseParameterResponse(data);
+    // 将数据添加到缓冲区
+    m_receiveBuffer.append(data);
+
+    // 使用协议处理器提取完整帧
+    QList<QByteArray> frames = m_protocolHandler->extractFramesFromBuffer(m_receiveBuffer);
+
+    // 处理每个完整帧
+    for (const QByteArray &frame : frames) {
+        processSingleFrame(frame);
+    }
 }
 
-// 槽函数
-void Params::on_readButton_clicked()
+void Params::processSingleFrame(const QByteArray &frame)
 {
-    if (!m_serialPort) {
-        QMessageBox::warning(this, "错误", "通信接口未初始化");
+    if (!m_protocolHandler->validateFrame(frame)) {
+        qWarning() << "无效的帧格式";
         return;
     }
 
-    // 使用公共的getter方法检查连接状态
-    if (!m_serialPort->getIsTcpConnected() &&
-        !m_serialPort->getIsUdpBound() &&
-        !m_serialPort->getIsSerialPortConnected()) {
-        QMessageBox::warning(this, "错误", "请先建立通信连接");
-        return;
-    }
+    quint8 command = m_protocolHandler->getCommandType(frame);
 
-    // 发送所有参数的读取请求
-    for (int row = 0; row < ui->tableWidget->rowCount(); ++row) {
-        // 跳过折叠的行
-        if (m_isGroupFolded && row >= 1 && row <= 5) continue;
+    // 处理参数响应帧
+    if (command == ProtocolCommand::PARAM_READ) {
+        quint8 paramId;
+        quint16 value;
+        if (m_protocolHandler->parseParameterResponse(frame, paramId, value)) {
+            QString paramIdStr = QString("0x%1").arg(paramId, 2, 16, QLatin1Char('0')).toUpper();
+            updateParameterValue(paramIdStr, value);
+            m_receivedParamCount++;
 
-        QTableWidgetItem *idItem = ui->tableWidget->item(row, 1);
-        if (idItem) {
-            // 添加小延迟，避免连续发送
-            QTimer::singleShot(row * 100, this, [this, id = idItem->text()]() {
-                sendParameterReadRequest(id);
-            });
+            // 如果收到了所有预期的参数响应
+            if (m_receivedParamCount >= m_expectedParamCount) {
+                qDebug() << "所有参数读取完成，共收到" << m_receivedParamCount << "个参数";
+                emit appendMessage(QString("[用户操作] 参数读取完成，共收到 %1 个参数").arg(m_receivedParamCount));
+                // QMessageBox::information(this, "读取完成",
+                //                          QString("参数读取完成，共收到 %1 个参数").arg(m_receivedParamCount));
+                ui->optLabel->setText(QString("参数读取完成，共收到 %1 个参数").arg(m_receivedParamCount));
+                ui->optLabel->setStyleSheet("color: green;");
+
+                m_receivedParamCount = 0;
+            }
         }
     }
-
-    QMessageBox::information(this, "读取参数", "正在获取当前模块的参数...");
+    // 可以添加其他命令类型的处理
 }
 
-
-void Params::on_writeButton_clicked()
+void Params::updateParameterValue(const QString &paramId, int value)
 {
-    if (!m_serialPort) {
-        QMessageBox::warning(this, "错误", "通信接口未初始化");
+    for (int row = 0; row < ui->tableWidget->rowCount(); ++row) {
+        QTableWidgetItem *idItem = ui->tableWidget->item(row, 1);
+        if (idItem && idItem->text().compare(paramId, Qt::CaseInsensitive) == 0) {
+            QWidget *widget = valueWidgets[row];
+            QLayout *layout = widget->layout();
+            if (layout && layout->count() > 0) {
+                QWidget *valueControl = layout->itemAt(0)->widget();
+                if (QComboBox *comboBox = qobject_cast<QComboBox*>(valueControl)) {
+                    // 对于雷达型号参数，直接设置索引
+                    if (paramId == "0x00") {
+                        comboBox->setCurrentIndex(value);
+                    } else {
+                        // 其他参数使用组合框的情况
+                        comboBox->setCurrentIndex(value);
+                    }
+                } else if (QSpinBox *spinBox = qobject_cast<QSpinBox*>(valueControl)) {
+                    spinBox->setValue(value);
+                }
+            }
+            qDebug() << "更新界面参数:" << paramId << "=" << value;
+            break;
+        }
+    }
+}
+// 槽函数
+// 获取当前参数
+void Params::on_readButton_clicked()
+{
+    TcpClient* tcpClient = TcpClient::getInstance();
+
+    if (!tcpClient->isConnected()) {
+        QMessageBox::warning(this, "错误", "请先建立TCP连接");
         return;
     }
 
-    // 使用公共的getter方法检查连接状态
-    if (!m_serialPort->getIsTcpConnected() &&
-        !m_serialPort->getIsUdpBound() &&
-        !m_serialPort->getIsSerialPortConnected()) {
-        QMessageBox::warning(this, "错误", "请先建立通信连接");
+    ui->optLabel->setText("正在获取所有参数...");
+    ui->optLabel->setStyleSheet("color: blue;");
+
+    // 构建统一读取命令: AA 00 03 0A
+    QByteArray frame = m_protocolHandler->buildCurParameterFrame();
+
+    // 发送统一读取命令
+    tcpClient->sendData(frame);
+
+    // 清空接收缓冲区
+    m_receiveBuffer.clear();
+    m_receivedParamCount = 0;
+
+    qDebug() << "发送统一参数读取请求，数据:" << frame.toHex(' ');
+    emit appendMessage("[用户操作] 读取当前参数...");
+    // QMessageBox::information(this, "读取参数", "正在获取所有参数...");
+}
+
+// 写入参数
+void Params::on_writeButton_clicked()
+{
+    TcpClient* tcpClient = TcpClient::getInstance();
+
+    if (!tcpClient->isConnected()) {
+        QMessageBox::warning(this, "错误", "请先建立TCP连接");
         return;
     }
 
@@ -351,7 +435,7 @@ void Params::on_writeButton_clicked()
         if (m_isGroupFolded && row >= 1 && row <= 5) continue;
 
         QTableWidgetItem *idItem = ui->tableWidget->item(row, 1);
-        if (!idItem) continue;
+        if (!idItem || idItem->text() == "-") continue; // 跳过无参数ID的行
 
         QWidget *widget = valueWidgets[row];
         QLayout *layout = widget->layout();
@@ -376,12 +460,15 @@ void Params::on_writeButton_clicked()
     }
 
     if (writeCount > 0) {
-        QMessageBox::information(this, "写入参数", QString("正在将 %1 个参数写入模块...").arg(writeCount));
+        QMessageBox::information(this, "写入参数",
+                                 QString("正在将 %1 个参数写入模块...\n写入操作无响应确认。").arg(writeCount));
+        ui->optLabel->setText("写入参数");
+        ui->optLabel->setStyleSheet("color: blue;");
     } else {
         QMessageBox::warning(this, "警告", "没有找到需要写入的参数");
     }
 }
-
+// 折叠按钮
 void Params::onFoldButtonClicked()
 {
     QPushButton *button = qobject_cast<QPushButton*>(sender());
@@ -407,6 +494,9 @@ void Params::onFoldButtonClicked()
 void Params::on_defaultButton_clicked()
 {
     restoreDefaultValues();
+    emit appendMessage("[用户操作] 恢复参数默认值");
+    ui->optLabel->setText("恢复参数默认值");
+    ui->optLabel->setStyleSheet("color: blue;");
     QMessageBox::information(this, "恢复默认", "正在恢复参数的默认值...");
 }
 
@@ -415,9 +505,6 @@ void Params::updateTableFromWidgets()
 {
     // 从界面控件读取值
     for (int row = 0; row < valueWidgets.size(); ++row) {
-        // 跳过折叠的行
-        if (m_isGroupFolded && row >= 1 && row <= 5) continue;
-
         QWidget *widget = valueWidgets[row];
         QLayout *layout = widget->layout();
         if (layout && layout->count() > 0) {
@@ -439,8 +526,6 @@ void Params::updateTableFromWidgets()
 void Params::restoreDefaultValues()
 {
     for (int row = 0; row < valueWidgets.size(); ++row) {
-        // 跳过折叠的行
-        if (m_isGroupFolded && row >= 1 && row <= 5) continue;
 
         QWidget *widget = valueWidgets[row];
         QLayout *layout = widget->layout();

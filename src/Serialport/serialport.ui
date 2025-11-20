@@ -158,7 +158,7 @@
         <item>
          <widget class="QLabel" name="lblPortState">
           <property name="text">
-           <string>等待串口链接</string>
+           <string>串口功能未开放</string>
           </property>
          </widget>
         </item>
@@ -212,7 +212,7 @@
           <item>
            <widget class="QLabel" name="label_3">
             <property name="text">
-             <string>IP:</string>
+             <string>IP:(已配置模块IP）</string>
             </property>
            </widget>
           </item>
@@ -222,7 +222,7 @@
           <item>
            <widget class="QLabel" name="label_4">
             <property name="text">
-             <string>端口:</string>
+             <string>端口:(已配置模块端口）</string>
             </property>
            </widget>
           </item>

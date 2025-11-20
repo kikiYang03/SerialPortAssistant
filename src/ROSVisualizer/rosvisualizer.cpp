@@ -11,6 +11,8 @@ ROSVisualizer::ROSVisualizer(QWidget *parent)
     , ui(new Ui::ROSVisualizer)  // 初始化ui指针
 {
     ui->setupUi(this);  // 必须先调用setupUi
+    // 初始化协议处理器
+    m_protocolHandler = new ProtocolHandler(this);
     setupUI();
 }
 
@@ -166,6 +168,11 @@ void ROSVisualizer::refreshTfOverlay()
 
             double yawDeg = fmod((transform.yaw * 180.0 / M_PI) + 360.0, 360.0);
             QString textYaw = QString::number(yawDeg, 'f', 2)+ "°";
+            // emit appendMessage(QStringLiteral("[接收数据] 机器人位置: X=%1, Y=%2, Z=%3, Yaw=%4")
+            //                        .arg(textX)
+            //                        .arg(textY)
+            //                        .arg(textZ)
+            //                        .arg(textYaw));
             // 设置右对齐
             ui->robPosX->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
             ui->robPosY->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -176,6 +183,11 @@ void ROSVisualizer::refreshTfOverlay()
             ui->robPosY->setText(textY);
             ui->robPosZ->setText(textZ);
             ui->robPosYaw->setText(textYaw);
+            // 标签右对齐
+            ui->labelX->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            ui->labelY->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            ui->labelZ->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            ui->labelYaw->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
             break;
         }
     }
@@ -337,5 +349,28 @@ void ROSVisualizer::on_locateBtn_clicked()
     ui->rosVisual->centerOn(robotPos);
 
     qDebug() << "View centered on robot at:" << robotPos;
+    emit appendMessage("[用户操作] 定位到机器人中心位置");
+}
+
+// 保存地图
+void ROSVisualizer::on_saveMapBtn_clicked()
+{
+    TcpClient* tcpClient = TcpClient::getInstance();
+
+    if (!tcpClient->isConnected()) {
+        QMessageBox::warning(this, "错误", "请先建立TCP连接");
+        return;
+    }
+
+    // 构建帧
+    QByteArray frame = m_protocolHandler->buildSaveMapFrame();
+
+    // 发送统一读取命令
+    tcpClient->sendData(frame);
+
+
+    qDebug() << "请求保存地图，数据:" << frame.toHex(' ');
+    emit appendMessage("[用户操作] 请求保存地图");
+    QMessageBox::information(this, "保存地图", "正在保存地图...");
 }
 

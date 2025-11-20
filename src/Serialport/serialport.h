@@ -24,6 +24,9 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include <protocolhandler.h>
+#include <tcpclient.h>
+
 
 // 简化ROS消息struct（自定义，非ROS原生类型）
 struct OccupancyGrid {
@@ -69,7 +72,8 @@ public:
     QSerialPort *serialPort;
 
     // 解析ROS数据帧
-    void parseRosFrame(quint8 topicId, const QByteArray &payload);
+    // void parseRosFrame(quint8 topicId, const QByteArray &payload);
+    void parseRosFrame(quint8 topicId, const QJsonObject &jsonData);
     double quaternionToYaw(double x, double y, double z, double w);
 
     // 添加公共访问方法以便Params类可以访问连接状态
@@ -79,6 +83,11 @@ public:
 
     // 添加公共数据发送方法
     void sendData(const QByteArray &data);  // 将sendData改为public
+
+    // 添加公共方法供其他界面调用
+    void appendMessage(const QString &message) {
+        emit appendToDisplay(message);
+    }
 
 protected:
     void findFreePorts();  //查找可用串口
@@ -98,6 +107,8 @@ private slots:
     // WiFi连接
     void on_wifiConnectBt_clicked();
 
+    void on_protocolComboBox_currentIndexChanged(int index);
+
 private:
     Ui::SerialPort *ui;
 
@@ -112,6 +123,7 @@ private:
     QTimer *testTimer;
 
     // 协议数据解析
+    void processProtocolFrame(const QByteArray &frame);
     void parseProtocolData(const QByteArray &data);
     // ROS数据解析
     void parseRosData(const QByteArray& recBuf);
@@ -122,10 +134,13 @@ private:
     bool isSerialPortConnected;
 
     // WiFi通信相关
-    QTcpSocket *tcpSocket;
+    // QTcpSocket *tcpSocket;
     QUdpSocket *udpSocket;
     bool isTcpConnected;
     bool isUdpBound;
+
+    // 添加TCP客户端单例访问
+    TcpClient* getTcpClient() { return TcpClient::getInstance(); }
 
     // 删除私有的sendData声明，因为已经移到public
     // void sendData(const QByteArray &data);
@@ -135,6 +150,9 @@ private:
 
 signals:
     void coordinatesUpdated(qint16 x, qint16 y, qint16 z, qint16 yaw);
+
+     // 新增：向显示窗口添加信息
+    void appendToDisplay(const QString &message);
 
     // ROS数据更新信号
     void rosMapUpdated(const OccupancyGrid& map);

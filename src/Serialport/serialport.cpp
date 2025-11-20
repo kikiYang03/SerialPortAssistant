@@ -10,31 +10,44 @@ SerialPort::SerialPort(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // 连接显示信号
+    connect(this, &SerialPort::appendToDisplay, this, [this](const QString &message) {
+        ui->recvEdit->append(message);
+    });
+
     // 初始化协议选择
     ui->protocolComboBox->addItem("TCP");
     ui->protocolComboBox->addItem("UDP");
 
-    findFreePorts();
+    // findFreePorts();
 
     // 初始化串口
-    serialPort = new QSerialPort(this);
-    connect(serialPort, &QSerialPort::readyRead, this, [this]() {
-        QByteArray recBuf = serialPort->readAll();
-        processReceivedData(recBuf);
-    });
-    isSerialPortConnected = false;
+    // serialPort = new QSerialPort(this);
+    // connect(serialPort, &QSerialPort::readyRead, this, [this]() {
+    //     QByteArray recBuf = serialPort->readAll();
+    //     processReceivedData(recBuf);
+    // });
+    // isSerialPortConnected = false;
 
-    // 初始化WiFi TCP
-    tcpSocket = new QTcpSocket(this);
-    connect(tcpSocket, &QTcpSocket::readyRead, this, [this]() {
-        QByteArray recBuf = tcpSocket->readAll();
-        processReceivedData(recBuf);
+    // 初始化TCP客户端连接
+    ui->ipInput->setEnabled(false);
+    ui->portInput->setEnabled(false);
+    TcpClient* tcpClient = TcpClient::getInstance();
+    connect(tcpClient, &TcpClient::dataReceived, this, &SerialPort::processReceivedData);
+    connect(tcpClient, &TcpClient::connectionStatusChanged, this, [this](bool connected) {
+        if (connected) {
+            ui->lblWifiState->setText("TCP已连接");
+            ui->lblWifiState->setStyleSheet("color:green");
+            ui->wifiConnectBt->setText("关闭连接");
+        } else {
+            ui->lblWifiState->setText("未连接");
+            ui->lblWifiState->setStyleSheet("color:red");
+            ui->wifiConnectBt->setText("打开连接");
+        }
     });
-    connect(tcpSocket, QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::errorOccurred),
-            this, [this](QAbstractSocket::SocketError error) {
-                QMessageBox::warning(this, "TCP错误", tcpSocket->errorString());
-            });
-    isTcpConnected = false;
+    connect(tcpClient, &TcpClient::connectionError, this, [this](const QString &errorString) {
+        QMessageBox::warning(this, "TCP错误", "连接失败！");
+    });
 
     // 初始化WiFi UDP
     udpSocket = new QUdpSocket(this);
@@ -56,8 +69,11 @@ SerialPort::SerialPort(QWidget *parent)
     testTimer->setSingleShot(true);  // 单次定时器
     connect(testTimer, &QTimer::timeout, this, &SerialPort::onTestTimeout);
 
-    //设置串口状态标签为绿色 表示等待连接状态
+    //设置状态标签为红色 表示等待连接状态
     ui->lblPortState->setStyleSheet("color:red");
+    // 串口功能待开发
+    ui->serialBox->setEnabled(false);
+
     ui->lblWifiState->setStyleSheet("color:red");
 
     // 发送、接收计数清零
@@ -74,9 +90,12 @@ SerialPort::~SerialPort()
     if(serialPort->isOpen()){
         serialPort->close();
     }
-    if (tcpSocket->state() == QAbstractSocket::ConnectedState) {
-        tcpSocket->disconnectFromHost();
+
+    TcpClient* tcpClient = TcpClient::getInstance();
+    if (tcpClient->isConnected()) {
+        tcpClient->disconnectFromHost();
     }
+
     if (udpSocket->state() == QAbstractSocket::BoundState) {
         udpSocket->close();
     }
@@ -87,7 +106,7 @@ SerialPort::~SerialPort()
 void SerialPort::sendData(const QByteArray &data)
 {
     int bytesSent = 0;
-    int currentProtocol = ui->protocolComboBox->currentIndex();
+    TcpClient* tcpClient = TcpClient::getInstance();
 
     if(isSerialPortConnected){
         if (serialPort->isOpen()) {
@@ -96,8 +115,8 @@ void SerialPort::sendData(const QByteArray &data)
             QMessageBox::warning(this, "警告", "串口未打开");
             return;
         }
-    }else if (isTcpConnected) {
-        bytesSent = tcpSocket->write(data);
+    }else if (tcpClient->isConnected()) {
+        bytesSent = tcpClient->sendData(data);
     } else if (isUdpBound) {
         QString ip = "192.168.200.1";
         quint16 port = 12312;
@@ -122,22 +141,13 @@ void SerialPort::sendData(const QByteArray &data)
 // 发送按钮点击槽函数
 void SerialPort::on_sendBt_clicked()
 {
-    // 构建测试数据: 0xAA 0x00 0x01 0x0A
-    QByteArray sendArray;
-    sendArray.append(static_cast<char>(0xAA));  // 帧头
-    sendArray.append(static_cast<char>(0x00));  // 固定数据1
-    sendArray.append(static_cast<char>(0x01));  // 固定数据2
-    sendArray.append(static_cast<char>(0x0A));  // 帧尾
+    // 使用协议工具类构建测试帧
+    QByteArray testFrame = ProtocolHandler::buildTestFrame();
+    sendData(testFrame);
 
-    // 发送数据
-    sendData(sendArray);
-
-    // 在接收框显示发送信息
     ui->recvEdit->append("已发送测试，等待模块回复..");
-
-    // 重置测试标志并启动定时器
-    testFlag = false;
-    testTimer->start(3000);  // 3秒超时
+    testFlag = false;       // 重置测试标志并启动定时器
+    testTimer->start(3000); // 3秒超时
 }
 
 // 测试超时处理函数
@@ -153,100 +163,61 @@ void SerialPort::onTestTimeout()
 // 数据处理
 void SerialPort::processReceivedData(const QByteArray &recBuf)
 {
-    // 接收字节计数
+    // 字节计数
     recvNum += recBuf.size();
-    QString sm = "接收字节数量： %1";
-    QString revText = sm.arg(recvNum);
-    ui->recvNum->setText(revText);
+    ui->recvNum->setText(QString("接收字节数量： %1").arg(recvNum));
 
-    // 将新数据添加到缓冲区
+    // 将数据添加到缓冲区
     recvBuffer.append(recBuf);
 
-    // 解析数据
-    parseRosData(recBuf);
+    // 使用协议工具类提取完整帧
+    QList<QByteArray> frames = ProtocolHandler::extractFramesFromBuffer(recvBuffer);
+
+    for (const QByteArray &frame : frames) {
+        processProtocolFrame(frame);
+    }
 }
 
-// 初步解析数据，判断帧头帧尾
-// 在parseRosData函数中添加参数响应解析
-void SerialPort::parseRosData(const QByteArray &recBuf)
+void SerialPort::processProtocolFrame(const QByteArray &frame)
 {
-    static QByteArray buffer;
-    buffer.append(recBuf);
+    if (!ProtocolHandler::validateFrame(frame)) {
+        qWarning() << "无效帧:" << frame.toHex(' ');
+        return;
+    }
 
-    while (buffer.size() > 0) {
-        // 查找帧头
-        int headIndex = buffer.indexOf(char(0xAA));
-        if (headIndex == -1) {
-            buffer.clear();
-            return;
+    quint8 command = ProtocolHandler::getCommandType(frame);
+    QByteArray payload = ProtocolHandler::extractPayload(frame);
+
+    switch (command) {
+    case ProtocolCommand::TEST:
+        if (ProtocolHandler::parseTestResponse(frame)) {
+            testFlag = true;
+            testTimer->stop();
+            ui->recvEdit->append("测试成功，模块通讯正常!!");
         }
+        break;
 
-        // 丢弃帧头前的噪声
-        if (headIndex > 0) {
-            buffer.remove(0, headIndex);
-        }
-
-        // 检查是否有足够的数据
-        if (buffer.size() < 3) {
-            return; // 等待更多数据
-        }
-
-        quint8 command = static_cast<quint8>(buffer.at(1));
-
-        // 根据命令类型确定帧长度
-        int frameLength = 0;
-        if (command == 0x10 || command == 0x11) {
-            // 参数命令帧：AA [命令] [参数ID] [值高字节] [值低字节] 0A (6字节)
-            frameLength = 6;
-        } else if (command >= 0x01 && command <= 0x03) {
-            // ROS话题帧，长度可变，需要查找帧尾
-            frameLength = -1; // 表示需要动态查找
-        } else if (command == 0x00) {
-            // 测试帧：AA 00 01 0A (4字节)
-            frameLength = 4;
-        } else {
-            // 未知命令，丢弃第一个字节继续解析
-            buffer.remove(0, 1);
-            continue;
-        }
-
-        // 对于可变长度帧，查找帧尾
-        if (frameLength == -1) {
-            int tailIndex = buffer.indexOf(char(0x0A), 2); // 从第3个字节开始查找
-            if (tailIndex == -1) {
-                return; // 等待更多数据
-            }
-            frameLength = tailIndex + 1;
-        }
-
-        // 检查是否有完整帧
-        if (buffer.size() < frameLength) {
-            return; // 等待更多数据
-        }
-
-        // 提取完整帧
-        QByteArray frame = buffer.left(frameLength);
-        buffer.remove(0, frameLength);
-
-        // 验证帧头帧尾
-        quint8 header = static_cast<quint8>(frame.at(0));
-        quint8 tail = static_cast<quint8>(frame.at(frame.size() - 1));
-
-        if (header != 0xAA || tail != 0x0A) {
-            qWarning() << "⚠️ 非法帧:" << frame.toHex(' ');
-            continue;
-        }
-
-        // 根据命令类型分发处理
-        if (command >= 0x01 && command <= 0x03) {
-            QByteArray payload = frame.mid(2, frame.size() - 3);
-            parseRosFrame(command, payload);
-        } else if (command == 0x00) {
-            parseTestData(frame);
-        } else if (command == 0x10 || command == 0x11) {
-            // 参数响应帧
+    case ProtocolCommand::PARAM_READ:{
+        quint8 paramId;
+        quint16 value;
+        if (ProtocolHandler::parseParameterResponse(frame, paramId, value)) {
             emit parameterResponseReceived(frame);
         }
+        break;
+    }
+
+    case ProtocolCommand::TF_DATA:
+    case ProtocolCommand::SCAN_DATA:
+    case ProtocolCommand::MAP_DATA: {
+        QJsonObject jsonData = ProtocolHandler::parseRosData(payload);
+        if (!jsonData.isEmpty()) {
+            parseRosFrame(command, jsonData);  // 现在传递 QJsonObject
+        }
+        break;
+    }
+
+    default:
+        qWarning() << "未知命令类型:" << command;
     }
 }
 
@@ -274,20 +245,11 @@ void SerialPort::parseTestData(const QByteArray &frame)
     }
 }
 // 解析ros话题数据
-void SerialPort::parseRosFrame(quint8 topicId, const QByteArray &payload)
+void SerialPort::parseRosFrame(quint8 topicId, const QJsonObject &obj)
 {
-    QJsonParseError err;
-    QJsonDocument doc = QJsonDocument::fromJson(payload, &err);
-    if (err.error != QJsonParseError::NoError) {
-        qWarning() << "JSON解析错误:" << err.errorString();
-        return;
-    }
-    if (!doc.isObject()) return;
-    QJsonObject obj = doc.object();
-    // qWarning() << "JSON解析结果:" << obj;
-
     switch (topicId)
     {
+
     case 0x01: { // TF
         TFMessage::Transform t;
         t.header.frame_id = obj.value("frame_id").toString();
@@ -354,11 +316,6 @@ void SerialPort::parseRosFrame(quint8 topicId, const QByteArray &payload)
     }
 
     case 0x03: { // Map
-        // qDebug() << "[Map] 接收ASCII数据:" << asciiData;
-        QJsonParseError err;
-        QJsonDocument doc = QJsonDocument::fromJson(payload, &err);
-        if (err.error != QJsonParseError::NoError) return;
-        QJsonObject obj = doc.object();
 
         OccupancyGrid map;
         map.width = obj.value("width").toInt();
@@ -366,6 +323,7 @@ void SerialPort::parseRosFrame(quint8 topicId, const QByteArray &payload)
         map.resolution = obj.value("resolution").toDouble();
         map.origin_x = obj.value("origin_x").toDouble();
         map.origin_y = obj.value("origin_y").toDouble();
+        // qDebug() << "绘制地图:" << obj;
 
         QJsonArray rle = obj.value("rle").toArray();
         map.data.reserve(map.width * map.height);
@@ -403,47 +361,40 @@ void SerialPort::on_wifiConnectBt_clicked()
 {
     // 根据选择的协议启用相应控件
     QString protocol = ui->protocolComboBox->currentText();
+    TcpClient* tcpClient = TcpClient::getInstance();
+
     if(ui->wifiConnectBt->text() == "打开连接"){
         // 禁用串口通信方式
-        ui->serialBox->setEnabled(false);
+        // ui->serialBox->setEnabled(false);
         if (protocol == "TCP"){
-            if (!isTcpConnected) {
+            if (!tcpClient->isConnected()) {
+                // QString ip = ui->ipInput->text();
+                 // bool ok;
+                // quint16 port = ui->portInput->text().toUShort(&ok);
+                // 固定模块IP 端口
+                QString ip = "10.42.0.1";
                 // QString ip = "172.27.191.1";
-                // quint16 port = 6666;
+                quint16 port = 6666;
 
-                QString ip = ui->ipInput->text();
-                bool ok;
-                quint16 port = ui->portInput->text().toUShort(&ok);
-                if (!ok || port == 0) {
-                    // 转换失败或端口号为0的处理
-                    QMessageBox::warning(this, "错误", "请输入有效的端口号(1-65535)");
-                    return;
-                }
+
+                // if (!ok || port == 0) {
+                //     // 转换失败或端口号为0的处理
+                //     QMessageBox::warning(this, "错误", "请输入有效的端口号(1-65535)");
+                //     return;
+                // }
 
                 qDebug() << "开始连接TCP..." << ip << ":" << port;
-                // 禁用代理（关键修复点）
-                tcpSocket->setProxy(QNetworkProxy::NoProxy);
 
-                // 连接成功信号
-                connect(tcpSocket, &QTcpSocket::connected, this, [this]() {
-                    qDebug() << "TCP连接成功！";
-                    isTcpConnected = true;
-                    ui->wifiConnectBt->setText("关闭连接");
-                    ui->lblWifiState->setText("TCP已连接");
-                    ui->lblWifiState->setStyleSheet("color:green");
-                });
-
-                // 连接超时处理
-                QTimer::singleShot(5000, this, [this]() {
-                    if (!isTcpConnected) {
-                        qDebug() << "TCP连接超时";
-                        tcpSocket->abort();
-                        QMessageBox::warning(this, "错误", "连接超时，请检查网络和服务器");
-                    }
-                });
-
-                tcpSocket->connectToHost(ip, port);
-
+                // 使用单例TCP客户端连接
+                if (tcpClient->connectToHost(ip, port)) {
+                    // 连接成功，等待连接建立信号
+                    // 不要在这里立即修改按钮文本，等待连接成功的信号
+                    qDebug() << "TCP连接请求已发送，等待连接结果...";
+                } else {
+                    // 连接立即失败
+                    QMessageBox::warning(this, "TCP错误", "连接失败！请检查ip/端口号！");
+                    // 不修改按钮文本，保持"打开连接"
+                }
             } else {
                 QMessageBox::warning(this, "警告", "TCP连接已打开");
             }
@@ -465,6 +416,7 @@ void SerialPort::on_wifiConnectBt_clicked()
                     ui->lblWifiState->setStyleSheet("color:green");
                 } else {
                     QMessageBox::warning(this, "错误", "UDP绑定失败");
+                    // UDP绑定失败，不修改按钮文本
                 }
             } else {
                 QMessageBox::warning(this, "警告", "UDP连接已打开");
@@ -473,12 +425,9 @@ void SerialPort::on_wifiConnectBt_clicked()
     }else if(ui->wifiConnectBt->text() == "关闭连接"){
         ui->wifiConnectBt->setText("打开连接");
         if (protocol == "TCP"){
-            if (isTcpConnected){
-                tcpSocket->disconnectFromHost();
-                isTcpConnected = false;
-                ui->wifiConnectBt->setText("打开连接");
-                ui->lblWifiState->setText("未连接");
-                ui->lblWifiState->setStyleSheet("color:red");
+            if (tcpClient->isConnected()){
+                tcpClient->disconnectFromHost();
+                // 断开连接后按钮文本已经是"打开连接"
             }
         }else if(protocol == "UDP"){
             if (isUdpBound) {
@@ -491,13 +440,13 @@ void SerialPort::on_wifiConnectBt_clicked()
             }
         }
 
-        ui->serialBox->setEnabled(true);
+        // ui->serialBox->setEnabled(true);
     }
 }
 
 
 
-// 不重要功能和未使用功能//////////////////////////////////////////////////////
+// 不重要功能和未使用功能///////////////////////////////////////////////////////
 //寻找空闲状态串口
 void SerialPort::findFreePorts(){
     QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
@@ -506,17 +455,22 @@ void SerialPort::findFreePorts(){
             ui->portNames->addItem(port.portName());
         }
     };
-    if (!ports.size()){
-        QMessageBox::warning(NULL,"Tip",QStringLiteral("can not find ports"));
-        return;
-    };
 }
 
 // 检测串口
 void SerialPort::on_portSearchBt_clicked()
 {
     ui->portNames->clear();
-    findFreePorts();
+    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+    for (const auto &port : QSerialPortInfo::availablePorts()) {
+        if (!port.isBusy()) {
+            ui->portNames->addItem(port.portName());
+        }
+    };
+    if (!ports.size()){
+        QMessageBox::warning(NULL,"提示",QStringLiteral("没有找到空闲的串口！"));
+        return;
+    };
 }
 
 // 打开串口
@@ -598,3 +552,13 @@ void SerialPort::on_btnClearSend_clicked()
     QString sm = "发送字节数量： 0";
     ui->sendNum->setText(sm);
 }
+
+void SerialPort::on_protocolComboBox_currentIndexChanged(int index)
+{
+    QString protocol = ui->protocolComboBox->currentText();
+
+    if (protocol == "UDP") {
+        QMessageBox::warning(this, "功能未开放", "UDP功能未开放");
+    }
+}
+

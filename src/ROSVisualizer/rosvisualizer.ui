@@ -57,7 +57,7 @@
               <number>6</number>
              </property>
              <item alignment="Qt::AlignHCenter">
-              <widget class="QLabel" name="label_2">
+              <widget class="QLabel" name="labelX">
                <property name="text">
                 <string>x:</string>
                </property>
@@ -75,7 +75,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item alignment="Qt::AlignHCenter">
-              <widget class="QLabel" name="label_3">
+              <widget class="QLabel" name="labelY">
                <property name="text">
                 <string>y:</string>
                </property>
@@ -93,7 +93,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_3">
              <item alignment="Qt::AlignHCenter">
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="labelZ">
                <property name="text">
                 <string>z:</string>
                </property>
@@ -111,7 +111,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <item alignment="Qt::AlignHCenter">
-              <widget class="QLabel" name="label_7">
+              <widget class="QLabel" name="labelYaw">
                <property name="text">
                 <string>yaw:</string>
                </property>
@@ -161,6 +161,13 @@
             <widget class="QPushButton" name="locateBtn">
              <property name="text">
               <string>定位机器</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="saveMapBtn">
+             <property name="text">
+              <string>保存地图</string>
              </property>
             </widget>
            </item>

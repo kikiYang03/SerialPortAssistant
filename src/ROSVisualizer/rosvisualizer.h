@@ -62,6 +62,12 @@ private slots:
 
     void on_locateBtn_clicked();
 
+    void on_saveMapBtn_clicked();
+
+signals:
+    // 添加消息显示信号
+    void appendMessage(const QString &message);
+
 private:
     void setupUI();
     void drawGrid();
@@ -75,6 +81,7 @@ private:
 private:
     Ui::ROSVisualizer *ui;  // UI 对象指针
 
+    ProtocolHandler *m_protocolHandler;  // 协议处理器
     QGraphicsScene *m_scene;
 
     // 地图、激光、TF 数据
