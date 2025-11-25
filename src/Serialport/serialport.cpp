@@ -30,8 +30,8 @@ SerialPort::SerialPort(QWidget *parent)
     // isSerialPortConnected = false;
 
     // 初始化TCP客户端连接
-    ui->ipInput->setEnabled(false);
-    ui->portInput->setEnabled(false);
+    // ui->ipInput->setEnabled(false);
+    // ui->portInput->setEnabled(false);
     TcpClient* tcpClient = TcpClient::getInstance();
     connect(tcpClient, &TcpClient::dataReceived, this, &SerialPort::processReceivedData);
     connect(tcpClient, &TcpClient::connectionStatusChanged, this, [this](bool connected) {
@@ -368,20 +368,20 @@ void SerialPort::on_wifiConnectBt_clicked()
         // ui->serialBox->setEnabled(false);
         if (protocol == "TCP"){
             if (!tcpClient->isConnected()) {
-                // QString ip = ui->ipInput->text();
-                 // bool ok;
-                // quint16 port = ui->portInput->text().toUShort(&ok);
+                QString ip = ui->ipInput->text();
+                 bool ok;
+                quint16 port = ui->portInput->text().toUShort(&ok);
                 // 固定模块IP 端口
-                QString ip = "10.42.0.1";
+                // QString ip = "10.42.0.1";
                 // QString ip = "172.27.191.1";
-                quint16 port = 6666;
+                // quint16 port = 6666;
 
 
-                // if (!ok || port == 0) {
-                //     // 转换失败或端口号为0的处理
-                //     QMessageBox::warning(this, "错误", "请输入有效的端口号(1-65535)");
-                //     return;
-                // }
+                if (!ok || port == 0) {
+                    // 转换失败或端口号为0的处理
+                    QMessageBox::warning(this, "错误", "请输入有效的端口号(1-65535)");
+                    return;
+                }
 
                 qDebug() << "开始连接TCP..." << ip << ":" << port;
 
