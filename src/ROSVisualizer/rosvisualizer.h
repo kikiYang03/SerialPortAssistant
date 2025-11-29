@@ -56,6 +56,7 @@ public slots:
     void updateMap(const OccupancyGrid& map);
     void updateScan(const LaserScan& scan);
     void updateTf(const TFMessage& tf);
+    void clearVisualization();  // 添加公共清空方法
 
 private slots:
     void on_clearBtn_clicked();
@@ -77,6 +78,7 @@ private:
     void refreshTfOverlay();
     void updateTrajectory(const QPointF& currentPos);
     void updateRobotPose(const QPointF& position, double yaw_deg);
+    void initRobotPose();
 
 private:
     Ui::ROSVisualizer *ui;  // UI 对象指针

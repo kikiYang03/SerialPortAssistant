@@ -27,11 +27,12 @@ SerialPort::SerialPort(QWidget *parent)
     //     QByteArray recBuf = serialPort->readAll();
     //     processReceivedData(recBuf);
     // });
-    // isSerialPortConnected = false;
+    isSerialPortConnected = false;
 
     // 初始化TCP客户端连接
-    // ui->ipInput->setEnabled(false);
-    // ui->portInput->setEnabled(false);
+    ui->ipInput->setEnabled(false);
+    ui->portInput->setEnabled(false);
+    ui->protocolComboBox->setEnabled(false);
     TcpClient* tcpClient = TcpClient::getInstance();
     connect(tcpClient, &TcpClient::dataReceived, this, &SerialPort::processReceivedData);
     connect(tcpClient, &TcpClient::connectionStatusChanged, this, [this](bool connected) {
@@ -39,10 +40,25 @@ SerialPort::SerialPort(QWidget *parent)
             ui->lblWifiState->setText("TCP已连接");
             ui->lblWifiState->setStyleSheet("color:green");
             ui->wifiConnectBt->setText("关闭连接");
+
+            // TCP连接成功时启动统计定时器
+            if (!statsTimer->isActive()) {
+                statsTimer->start();
+                elapsedTimer.restart();
+                // 重置计数器
+                tfCount = 0;
+                scanCount = 0;
+                mapCount = 0;
+            }
         } else {
             ui->lblWifiState->setText("未连接");
             ui->lblWifiState->setStyleSheet("color:red");
             ui->wifiConnectBt->setText("打开连接");
+
+            // 停止统计定时器
+            if (statsTimer->isActive()) {
+                statsTimer->stop();
+            }
         }
     });
     connect(tcpClient, &TcpClient::connectionError, this, [this](const QString &errorString) {
@@ -82,6 +98,13 @@ SerialPort::SerialPort(QWidget *parent)
 
     // 初始化接收缓冲区
     recvBuffer.clear();
+
+    // 初始化统计定时器
+    statsTimer = new QTimer(this);
+    statsTimer->setInterval(10000); // 10秒
+    connect(statsTimer, &QTimer::timeout, this, &SerialPort::onStatsTimeout);
+
+    elapsedTimer.start();
 }
 
 // 析构函数
@@ -99,6 +122,10 @@ SerialPort::~SerialPort()
     if (udpSocket->state() == QAbstractSocket::BoundState) {
         udpSocket->close();
     }
+
+    if (statsTimer && statsTimer->isActive()) {
+        statsTimer->stop();
+    }
     delete ui;
 }
 
@@ -109,6 +136,7 @@ void SerialPort::sendData(const QByteArray &data)
     TcpClient* tcpClient = TcpClient::getInstance();
 
     if(isSerialPortConnected){
+        qDebug() << "使用串口发送测试数据...";
         if (serialPort->isOpen()) {
             bytesSent = serialPort->write(data);
         } else {
@@ -116,8 +144,10 @@ void SerialPort::sendData(const QByteArray &data)
             return;
         }
     }else if (tcpClient->isConnected()) {
+        qDebug() << "使用TCP发送测试数据...";
         bytesSent = tcpClient->sendData(data);
     } else if (isUdpBound) {
+        qDebug() << "使用UDP发送测试数据...";
         QString ip = "192.168.200.1";
         quint16 port = 12312;
 
@@ -143,9 +173,10 @@ void SerialPort::on_sendBt_clicked()
 {
     // 使用协议工具类构建测试帧
     QByteArray testFrame = ProtocolHandler::buildTestFrame();
+    qDebug() << "发送测试数据中...."<< testFrame;
     sendData(testFrame);
-
-    ui->recvEdit->append("已发送测试，等待模块回复..");
+    QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss >> 测试操作: ");
+    ui->recvEdit->append(timestamp + "已发送测试，等待模块回复...");
     testFlag = false;       // 重置测试标志并启动定时器
     testTimer->start(3000); // 3秒超时
 }
@@ -154,8 +185,9 @@ void SerialPort::on_sendBt_clicked()
 void SerialPort::onTestTimeout()
 {
     if (!testFlag) {
-        ui->recvEdit->append("测试失败!!!");
-        testFlag = false;  // 确保标志位重置
+        QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss >> 测试操作: ");
+        ui->recvEdit->append(timestamp + " 测试失败!!!");
+        testFlag = false;
     }
 }
 
@@ -193,7 +225,8 @@ void SerialPort::processProtocolFrame(const QByteArray &frame)
         if (ProtocolHandler::parseTestResponse(frame)) {
             testFlag = true;
             testTimer->stop();
-            ui->recvEdit->append("测试成功，模块通讯正常!!");
+            QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss >> 测试操作: ");
+            ui->recvEdit->append(timestamp + " 测试成功，模块通讯正常!!");
         }
         break;
 
@@ -206,12 +239,29 @@ void SerialPort::processProtocolFrame(const QByteArray &frame)
         break;
     }
 
-    case ProtocolCommand::TF_DATA:
-    case ProtocolCommand::SCAN_DATA:
-    case ProtocolCommand::MAP_DATA: {
+    case ProtocolCommand::TF_DATA: {
+        tfCount++;  // 增加TF计数
         QJsonObject jsonData = ProtocolHandler::parseRosData(payload);
         if (!jsonData.isEmpty()) {
-            parseRosFrame(command, jsonData);  // 现在传递 QJsonObject
+            parseRosFrame(command, jsonData);
+        }
+        break;
+    }
+
+    case ProtocolCommand::SCAN_DATA: {
+        scanCount++;  // 增加SCAN计数
+        QJsonObject jsonData = ProtocolHandler::parseRosData(payload);
+        if (!jsonData.isEmpty()) {
+            parseRosFrame(command, jsonData);
+        }
+        break;
+    }
+
+    case ProtocolCommand::MAP_DATA: {
+        mapCount++;  // 增加MAP计数
+        QJsonObject jsonData = ProtocolHandler::parseRosData(payload);
+        if (!jsonData.isEmpty()) {
+            parseRosFrame(command, jsonData);
         }
         break;
     }
@@ -244,13 +294,42 @@ void SerialPort::parseTestData(const QByteArray &frame)
         testFlag = false;
     }
 }
+
+// 定时任务
+void SerialPort::onStatsTimeout()
+{
+    // 固定10秒时间窗口
+    static const double TIME_WINDOW = 10.0;
+
+    // 计算频率
+    double tfFreq = tfCount / TIME_WINDOW;
+    double scanFreq = scanCount / TIME_WINDOW;
+    double mapFreq = mapCount / TIME_WINDOW;
+
+    // 获取当前时间
+    QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss >> 话题统计: ");
+
+    QString stats = QString("%1 /tf = %2 Hz, /scan = %3 Hz   /map = %4 Hz")
+                        .arg(timestamp)
+                        .arg(tfFreq, 0, 'f', 2)
+                        .arg(scanFreq, 0, 'f', 2)
+                        .arg(mapFreq, 0, 'f', 2);
+
+    ui->recvEdit->append(stats);
+
+    // 重置计数器
+    tfCount = 0;
+    scanCount = 0;
+    mapCount = 0;
+}
+
 // 解析ros话题数据
 void SerialPort::parseRosFrame(quint8 topicId, const QJsonObject &obj)
 {
     switch (topicId)
     {
 
-    case 0x01: { // TF
+    case ProtocolCommand::TF_DATA: { // TF
         TFMessage::Transform t;
         t.header.frame_id = obj.value("frame_id").toString();
         t.child_frame_id = obj.value("child_frame_id").toString();
@@ -301,7 +380,7 @@ void SerialPort::parseRosFrame(quint8 topicId, const QJsonObject &obj)
         break;
     }
 
-    case 0x02: { // Scan
+    case ProtocolCommand::SCAN_DATA: { // Scan
         LaserScan scan;
         scan.angle_min = obj.value("angle_min").toDouble();
         scan.angle_max = obj.value("angle_max").toDouble();
@@ -315,7 +394,7 @@ void SerialPort::parseRosFrame(quint8 topicId, const QJsonObject &obj)
         break;
     }
 
-    case 0x03: { // Map
+    case ProtocolCommand::MAP_DATA: { // Map
 
         OccupancyGrid map;
         map.width = obj.value("width").toInt();
@@ -364,17 +443,21 @@ void SerialPort::on_wifiConnectBt_clicked()
     TcpClient* tcpClient = TcpClient::getInstance();
 
     if(ui->wifiConnectBt->text() == "打开连接"){
+        // 清空输出窗口
+        on_clearRecvBt_clicked();
+        // 清空地图
+        emit requestClearVisualization();
         // 禁用串口通信方式
         // ui->serialBox->setEnabled(false);
         if (protocol == "TCP"){
             if (!tcpClient->isConnected()) {
-                QString ip = ui->ipInput->text();
-                 bool ok;
-                quint16 port = ui->portInput->text().toUShort(&ok);
+                // QString ip = ui->ipInput->text();
+                bool ok = true;
+                // quint16 port = ui->portInput->text().toUShort(&ok);
                 // 固定模块IP 端口
-                // QString ip = "10.42.0.1";
+                QString ip = "10.42.0.1";
                 // QString ip = "172.27.191.1";
-                // quint16 port = 6666;
+                quint16 port = 6666;
 
 
                 if (!ok || port == 0) {
@@ -397,6 +480,10 @@ void SerialPort::on_wifiConnectBt_clicked()
                 }
             } else {
                 QMessageBox::warning(this, "警告", "TCP连接已打开");
+                // 启用统计定时器
+                if (!statsTimer->isActive()) {
+                    statsTimer->start();
+                }
             }
 
         }else if(protocol == "UDP"){
@@ -414,15 +501,38 @@ void SerialPort::on_wifiConnectBt_clicked()
                     ui->wifiConnectBt->setText("关闭连接");
                     ui->lblWifiState->setText("UDP已连接");
                     ui->lblWifiState->setStyleSheet("color:green");
+
+                    // UDP连接成功时启动统计定时器
+                    if (!statsTimer->isActive()) {
+                        statsTimer->start();
+                        elapsedTimer.restart();
+                        // 重置计数器
+                        tfCount = 0;
+                        scanCount = 0;
+                        mapCount = 0;
+                    }
                 } else {
                     QMessageBox::warning(this, "错误", "UDP绑定失败");
                     // UDP绑定失败，不修改按钮文本
                 }
             } else {
                 QMessageBox::warning(this, "警告", "UDP连接已打开");
+                // 启用统计定时器
+                if (!statsTimer->isActive()) {
+                    statsTimer->start();
+                }
             }
         }
     }else if(ui->wifiConnectBt->text() == "关闭连接"){
+        // 停止统计定时器
+        if (statsTimer->isActive()) {
+            statsTimer->stop();
+        }
+
+        // 重置统计计数器
+        tfCount = 0;
+        scanCount = 0;
+        mapCount = 0;
         ui->wifiConnectBt->setText("打开连接");
         if (protocol == "TCP"){
             if (tcpClient->isConnected()){

@@ -252,7 +252,8 @@ void Params::sendParameterWriteRequest(const QString &paramId, int value)
     tcpClient->sendData(frame);
 
     qDebug() << "发送参数写入请求:" << paramId << "值:" << value << "数据:" << frame.toHex(' ');
-    emit appendMessage("[用户操作] 写入参数");
+    QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss >> 用户操作: ");
+    emit appendMessage(timestamp + "写入参数");
 }
 // 解析参数响应帧
 void Params::parseParameterResponse(const QByteArray &data)
@@ -350,10 +351,9 @@ void Params::processSingleFrame(const QByteArray &frame)
             // 如果收到了所有预期的参数响应
             if (m_receivedParamCount >= m_expectedParamCount) {
                 qDebug() << "所有参数读取完成，共收到" << m_receivedParamCount << "个参数";
-                emit appendMessage(QString("[用户操作] 参数读取完成，共收到 %1 个参数").arg(m_receivedParamCount));
-                // QMessageBox::information(this, "读取完成",
-                //                          QString("参数读取完成，共收到 %1 个参数").arg(m_receivedParamCount));
-                ui->optLabel->setText(QString("参数读取完成，共收到 %1 个参数").arg(m_receivedParamCount));
+                QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss >> 用户操作: ");
+                emit appendMessage(timestamp + QString("参数读取完成"));
+                ui->optLabel->setText(QString("参数读取完成"));
                 ui->optLabel->setStyleSheet("color: green;");
 
                 m_receivedParamCount = 0;
@@ -414,7 +414,8 @@ void Params::on_readButton_clicked()
     m_receivedParamCount = 0;
 
     qDebug() << "发送统一参数读取请求，数据:" << frame.toHex(' ');
-    emit appendMessage("[用户操作] 读取当前参数...");
+    QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss >> 用户操作: ");
+    emit appendMessage(timestamp + "读取当前参数...");
     // QMessageBox::information(this, "读取参数", "正在获取所有参数...");
 }
 
@@ -460,8 +461,8 @@ void Params::on_writeButton_clicked()
     }
 
     if (writeCount > 0) {
-        QMessageBox::information(this, "写入参数",
-                                 QString("正在将 %1 个参数写入模块...\n写入操作无响应确认。").arg(writeCount));
+        // QMessageBox::information(this, "写入参数",
+        //                          QString("正在将 %1 个参数写入模块...\n写入操作无响应确认。").arg(writeCount));
         ui->optLabel->setText("写入参数");
         ui->optLabel->setStyleSheet("color: blue;");
     } else {
@@ -494,7 +495,8 @@ void Params::onFoldButtonClicked()
 void Params::on_defaultButton_clicked()
 {
     restoreDefaultValues();
-    emit appendMessage("[用户操作] 恢复参数默认值");
+    QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss >> 用户操作: ");
+    emit appendMessage(timestamp + "恢复参数默认值");
     ui->optLabel->setText("恢复参数默认值");
     ui->optLabel->setStyleSheet("color: blue;");
     QMessageBox::information(this, "恢复默认", "正在恢复参数的默认值...");

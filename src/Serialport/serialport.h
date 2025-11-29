@@ -23,6 +23,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QElapsedTimer>
 
 #include <protocolhandler.h>
 #include <tcpclient.h>
@@ -148,6 +149,14 @@ private:
     // TF缓存
     QMap<QString, TFMessage::Transform> tfCache;
 
+    // 统计相关变量
+    int tfCount = 0;
+    int scanCount = 0;
+    int mapCount = 0;
+    QTimer* statsTimer;
+    QElapsedTimer elapsedTimer;
+    void onStatsTimeout();
+
 signals:
     void coordinatesUpdated(qint16 x, qint16 y, qint16 z, qint16 yaw);
 
@@ -160,6 +169,9 @@ signals:
     void rosTfUpdated(const TFMessage& tf);
 
     void parameterResponseReceived(const QByteArray &data);  // 参数响应信号
+    // 清理绘图视图
+    void requestClearVisualization();
+
 };
 
 

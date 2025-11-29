@@ -86,6 +86,7 @@ bool TcpClient::isConnected() const
 
 qint64 TcpClient::sendData(const QByteArray &data)
 {
+    qDebug() << "sendData...";
     if (!isConnected()) {
         qWarning() << "TCP未连接，无法发送数据";
         return -1;

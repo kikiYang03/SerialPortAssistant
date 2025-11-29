@@ -52,6 +52,8 @@ void ROSVisualizer::setupUI()
     // ui->verticalSpacer->setMinimumWidth(100);
     // 设置右侧布局固定
     ui->horizontalLayout_5->setStretch(1,0);
+    // 在初始化时就创建机器人箭头（位于原点）
+    initRobotPose();
 
 }
 
@@ -105,6 +107,39 @@ void ROSVisualizer::drawAxes()
     // L+轴 (Left) - 蓝色
     QPen lAxisPen(Qt::blue, 0.2);
     m_scene->addLine(0, 0, 0, axisLength, lAxisPen);
+}
+
+// 新增初始化函数
+void ROSVisualizer::initRobotPose()
+{
+    if (!m_tfGroup) {
+        m_tfGroup = new QGraphicsItemGroup();
+        m_tfGroup->setZValue(20);
+        m_scene->addItem(m_tfGroup);
+
+        // 检查图片资源
+        QPixmap arrowPixmap(":/images/arrow.png");
+        if (arrowPixmap.isNull()) {
+            qWarning() << "箭头图片加载失败，使用替代图形";
+            // 使用带方向的三角形作为替代
+            QPolygonF triangle;
+            triangle << QPointF(0, -0.15) << QPointF(-0.1, 0.1) << QPointF(0.1, 0.1);
+            QGraphicsPolygonItem* triangleItem = new QGraphicsPolygonItem(triangle);
+            triangleItem->setBrush(Qt::red);
+            triangleItem->setPen(QPen(Qt::darkRed, 0.02));
+            m_tfGroup->addToGroup(triangleItem);
+        } else {
+            QGraphicsPixmapItem* arrowItem = new QGraphicsPixmapItem(arrowPixmap);
+            arrowItem->setOffset(-arrowPixmap.width()/2, -arrowPixmap.height()/2);
+            arrowItem->setScale(0.003);
+            m_tfGroup->addToGroup(arrowItem);
+        }
+
+        qDebug() << "机器人箭头初始化完成（原点位置）";
+    }
+
+    // 初始位置设为原点，朝向0度（F+方向）
+    updateRobotPose(QPointF(0, 0), 0.0);
 }
 
 // ====================== 实时刷新地图 ======================
@@ -228,19 +263,21 @@ void ROSVisualizer::updateTrajectory(const QPointF& currentPos)
 void ROSVisualizer::updateRobotPose(const QPointF& position, double yaw_deg)
 {
     if (!m_tfGroup) {
-        m_tfGroup = new QGraphicsItemGroup();
-        m_tfGroup->setZValue(20);
-        m_scene->addItem(m_tfGroup);
-
-        QGraphicsPixmapItem* arrowItem = new QGraphicsPixmapItem(QPixmap(":/images/arrow.png"));
-        arrowItem->setOffset(-arrowItem->pixmap().width()/2, -arrowItem->pixmap().height()/2);
-        arrowItem->setScale(0.003);
-        m_tfGroup->addToGroup(arrowItem);
+        qWarning() << "m_tfGroup未初始化！";
+        return;
     }
 
-    auto arrowItem = dynamic_cast<QGraphicsPixmapItem*>(m_tfGroup->childItems().first());
-    arrowItem->setPos(position);
-    arrowItem->setRotation(yaw_deg + 90.0);  // FLU修正
+    // 直接更新位置和旋转
+    if (!m_tfGroup->childItems().isEmpty()) {
+        auto firstChild = m_tfGroup->childItems().first();
+        firstChild->setPos(position);
+        firstChild->setRotation(yaw_deg + 90.0);  // FLU修正
+
+        // qDebug() << "机器人位置更新: (" << position.x() << "," << position.y()
+        //          << "), 朝向: " << yaw_deg << "度";
+    } else {
+        qWarning() << "m_tfGroup中没有子图元!";
+    }
 }
 
 // ====================== 实时叠加激光 ======================
@@ -295,27 +332,39 @@ void ROSVisualizer::refreshScanOverlay()
     m_scene->addItem(m_scanGroup);
 }
 
-
-void ROSVisualizer::on_clearBtn_clicked()
+void ROSVisualizer::clearVisualization()
 {
-    // 清空场景的所有元素
-    m_scene->clear();
+    // 复制 on_clearBtn_clicked() 的内容到这里
+    if (m_mapItem) {
+        m_scene->removeItem(m_mapItem);
+        delete m_mapItem;
+        m_mapItem = nullptr;
+    }
 
-    // 重新绘制背景网格和坐标轴
-    drawGrid();
-    drawAxes();
+    if (m_scanGroup) {
+        m_scene->removeItem(m_scanGroup);
+        delete m_scanGroup;
+        m_scanGroup = nullptr;
+    }
 
-    // 清空所有数据
+    if (m_trajectoryGroup) {
+        m_scene->removeItem(m_trajectoryGroup);
+        delete m_trajectoryGroup;
+        m_trajectoryGroup = nullptr;
+    }
+
+    // 🚨 不清除m_tfGroup，只重置位置到原点
+    if (m_tfGroup && !m_tfGroup->childItems().isEmpty()) {
+        auto firstChild = m_tfGroup->childItems().first();
+        firstChild->setPos(0, 0);
+        firstChild->setRotation(90.0);  // 初始朝向F+方向
+    }
+
+    // 清空数据
     m_currentMap = OccupancyGrid();
     m_currentScan = LaserScan();
     m_currentTf = TFMessage();
     m_trajectoryPoints.clear();
-
-    // 清空图元引用
-    m_mapItem = nullptr;
-    m_scanGroup = nullptr;
-    m_tfGroup = nullptr;
-    m_trajectoryGroup = nullptr;
 
     // 清空界面显示的位姿信息
     ui->robPosX->clear();
@@ -323,7 +372,12 @@ void ROSVisualizer::on_clearBtn_clicked()
     ui->robPosZ->clear();
     ui->robPosYaw->clear();
 
-    qDebug() << "Visualization cleared.";
+    qDebug() << "可视化已清除，机器人重置到原点";
+}
+
+void ROSVisualizer::on_clearBtn_clicked()
+{
+    clearVisualization();
 }
 
 
@@ -349,7 +403,8 @@ void ROSVisualizer::on_locateBtn_clicked()
     ui->rosVisual->centerOn(robotPos);
 
     qDebug() << "View centered on robot at:" << robotPos;
-    emit appendMessage("[用户操作] 定位到机器人中心位置");
+    QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss >> 用户操作: ");
+    emit appendMessage(timestamp + "定位到机器人中心位置");
 }
 
 // 保存地图
@@ -370,7 +425,8 @@ void ROSVisualizer::on_saveMapBtn_clicked()
 
 
     qDebug() << "请求保存地图，数据:" << frame.toHex(' ');
-    emit appendMessage("[用户操作] 请求保存地图");
+    QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss >> 用户操作: ");
+    emit appendMessage(timestamp + "请求保存地图");
     QMessageBox::information(this, "保存地图", "正在保存地图...");
 }
 
