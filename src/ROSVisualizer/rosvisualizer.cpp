@@ -201,7 +201,13 @@ void ROSVisualizer::refreshTfOverlay()
             QString textY = QString::number(transform.y, 'f', 2) + "m";
             QString textZ = QString::number(transform.z, 'f', 2) + "m";
 
-            double yawDeg = fmod((transform.yaw * 180.0 / M_PI) + 360.0, 360.0);
+            double yawRad = transform.yaw;  // 假设这是 atan2 得到的弧度
+            double yawDeg = yawRad * 180.0 / M_PI;
+
+            // 限制到 -180~180
+            if (yawDeg >  180.0) yawDeg -= 360.0;
+            if (yawDeg < -180.0) yawDeg += 360.0;
+
             QString textYaw = QString::number(yawDeg, 'f', 2)+ "°";
             // emit appendMessage(QStringLiteral("[接收数据] 机器人位置: X=%1, Y=%2, Z=%3, Yaw=%4")
             //                        .arg(textX)

@@ -201,3 +201,4 @@ int ProtocolHandler::getFrameLength(quint8 command, const QByteArray &data)
         return -1;
     }
 }
+

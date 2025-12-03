@@ -3,6 +3,24 @@
 #include <QDataStream>
 #include <QTimer>  // 添加定时器头文件
 
+// 把 11 字节串口坐标帧解析成字符串，失败返回空串
+static QString uartFrameToText(const QByteArray &fr)
+{
+    if (fr.size() != 11 || quint8(fr[0]) != 0xAA || quint8(fr[10]) != 0x0A)
+        return {};
+
+    auto readI16 = [&](int off) -> qint16 {
+        return qFromBigEndian<qint16>(reinterpret_cast<const uchar*>(fr.constData() + off));
+    };
+    qint16 x  = readI16(1);
+    qint16 y  = readI16(3);
+    qint16 z  = readI16(5);
+    qint16 yaw= readI16(7);
+
+    return QStringLiteral("x=%1cm  y=%2cm  z=%3cm  yaw=%4°")
+        .arg(x).arg(y).arg(z).arg(yaw/10.0, 0, 'f', 1);
+}
+
 // 初始化ui界面
 SerialPort::SerialPort(QWidget *parent)
     : QWidget(parent)
@@ -15,23 +33,26 @@ SerialPort::SerialPort(QWidget *parent)
         ui->recvEdit->append(message);
     });
 
-    // 初始化协议选择
-    ui->protocolComboBox->addItem("TCP");
-    ui->protocolComboBox->addItem("UDP");
 
-    // findFreePorts();
 
     // 初始化串口
-    // serialPort = new QSerialPort(this);
-    // connect(serialPort, &QSerialPort::readyRead, this, [this]() {
-    //     QByteArray recBuf = serialPort->readAll();
-    //     processReceivedData(recBuf);
-    // });
+    findFreePorts();
+    serialPort = new QSerialPort(this);
+    connect(serialPort, &QSerialPort::readyRead, this, [this]() {
+        QByteArray recBuf = serialPort->readAll();
+        processReceivedData(recBuf);
+    });
     isSerialPortConnected = false;
 
     // 初始化TCP客户端连接
+    // 协议选择
+    ui->protocolComboBox->addItem("TCP");
+    ui->protocolComboBox->addItem("UDP");
+
     ui->ipInput->setEnabled(false);
+    ui->ipInput->setText("10.42.0.1");
     ui->portInput->setEnabled(false);
+    ui->portInput->setText("6666");
     ui->protocolComboBox->setEnabled(false);
     TcpClient* tcpClient = TcpClient::getInstance();
     connect(tcpClient, &TcpClient::dataReceived, this, &SerialPort::processReceivedData);
@@ -87,8 +108,8 @@ SerialPort::SerialPort(QWidget *parent)
 
     //设置状态标签为红色 表示等待连接状态
     ui->lblPortState->setStyleSheet("color:red");
-    // 串口功能待开发
-    ui->serialBox->setEnabled(false);
+
+    // ui->serialBox->setEnabled(false);
 
     ui->lblWifiState->setStyleSheet("color:red");
 
@@ -195,18 +216,33 @@ void SerialPort::onTestTimeout()
 // 数据处理
 void SerialPort::processReceivedData(const QByteArray &recBuf)
 {
-    // 字节计数
     recvNum += recBuf.size();
     ui->recvNum->setText(QString("接收字节数量： %1").arg(recvNum));
 
-    // 将数据添加到缓冲区
-    recvBuffer.append(recBuf);
-
-    // 使用协议工具类提取完整帧
-    QList<QByteArray> frames = ProtocolHandler::extractFramesFromBuffer(recvBuffer);
-
-    for (const QByteArray &frame : frames) {
-        processProtocolFrame(frame);
+    if (isSerialPortConnected) {
+        /* ---------- 串口链路：直接打印 x/y/z/yaw ---------- */
+        recvBuffer.append(recBuf);
+        while (recvBuffer.size() >= 11) {
+            int head = recvBuffer.indexOf(char(0xAA));
+            if (head < 0 || recvBuffer.size() - head < 11) break;
+            QByteArray frame = recvBuffer.mid(head, 11);
+            if (quint8(frame[0]) != 0xAA || quint8(frame[10]) != 0x0A) {
+                recvBuffer.remove(head, 1);   // 帧头不对，丢掉 1 字节继续找
+                continue;
+            }
+            recvBuffer.remove(head, 11);      // 扔掉整帧
+            QString line = uartFrameToText(frame);
+            if (!line.isEmpty()) {
+                QString ts = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss >> 串口接收数据: ");
+                ui->recvEdit->append(ts + line);
+            }
+        }
+    } else {
+        /* ---------- 网口链路：保持原 ROS-JSON 逻辑 ---------- */
+        recvBuffer.append(recBuf);
+        QList<QByteArray> frames = ProtocolHandler::extractFramesFromBuffer(recvBuffer);
+        for (const QByteArray &fr : frames)
+            processProtocolFrame(fr);
     }
 }
 
@@ -348,7 +384,7 @@ void SerialPort::parseRosFrame(quint8 topicId, const QJsonObject &obj)
         // 缓存每个变换
         tfCache[t.header.frame_id + "->" + t.child_frame_id] = t;
 
-        // ✅ 当 map->odom 和 odom->base_link 都存在时，合成 map->base_link
+        // 当 map->odom 和 odom->base_link 都存在时，合成 map->base_link
         if (tfCache.contains("map->odom") && tfCache.contains("odom->base_link")) {
             auto mapOdom = tfCache["map->odom"];
             auto odomBase = tfCache["odom->base_link"];
@@ -448,15 +484,15 @@ void SerialPort::on_wifiConnectBt_clicked()
         // 清空地图
         emit requestClearVisualization();
         // 禁用串口通信方式
-        // ui->serialBox->setEnabled(false);
+        ui->serialBox->setEnabled(false);
         if (protocol == "TCP"){
             if (!tcpClient->isConnected()) {
                 // QString ip = ui->ipInput->text();
                 bool ok = true;
                 // quint16 port = ui->portInput->text().toUShort(&ok);
                 // 固定模块IP 端口
-                QString ip = "10.42.0.1";
-                // QString ip = "172.27.191.1";
+                // QString ip = "10.42.0.1";
+                QString ip = "172.27.191.1";
                 quint16 port = 6666;
 
 
@@ -534,6 +570,7 @@ void SerialPort::on_wifiConnectBt_clicked()
         scanCount = 0;
         mapCount = 0;
         ui->wifiConnectBt->setText("打开连接");
+        ui->serialBox->setEnabled(true);
         if (protocol == "TCP"){
             if (tcpClient->isConnected()){
                 tcpClient->disconnectFromHost();
@@ -586,9 +623,6 @@ void SerialPort::on_portSearchBt_clicked()
 // 打开串口
 void SerialPort::on_portOpenBt_clicked()
 {
-    // 设置WifiBox不可选
-    ui->wifiBox->setEnabled(false);
-
     qint32 baudRate = 921600;
     QSerialPort::DataBits dataBits;
     QSerialPort::StopBits stopBits;
@@ -613,6 +647,12 @@ void SerialPort::on_portOpenBt_clicked()
     // 如果打开成功，反转打开按钮显示和功能。打开失败，无变化，并且弹出错误对话框。
     if(ui->portOpenBt->text() == "打开串口"){
         if(serialPort->open(QIODevice::ReadWrite) == true){
+            // 设置WifiBox不可选
+            ui->wifiBox->setEnabled(false);
+            // 不支持发送数据
+            ui->groupBox_4->setEnabled(false);
+            // 不支持检测串口
+            ui->portSearchBt->setEnabled(false);
             isSerialPortConnected=true;
             ui->portOpenBt->setText("关闭串口");
             // 让端口号下拉框不可选，避免误操作（选择功能不可用，控件背景为灰色）
@@ -621,6 +661,7 @@ void SerialPort::on_portOpenBt_clicked()
             QString status = sm.arg(serialPort->portName());
             ui->lblPortState->setText(status);
             ui->lblPortState->setStyleSheet("color:green");
+            QMessageBox::warning(this, "提示", "仅用于测试串口输出坐标");
         }else{
             QMessageBox::critical(this, "错误", "串口打开失败，请检查串口是否被占用");
             QString sm = "%1 串口不可用";
@@ -641,6 +682,12 @@ void SerialPort::on_portOpenBt_clicked()
         QString status = sm.arg(serialPort->portName());
         ui->lblPortState->setText(status);
         ui->lblPortState->setStyleSheet("color:red");
+        // 设置WifiBox可选
+        ui->wifiBox->setEnabled(true);
+        // 支持发送数据
+        ui->groupBox_4->setEnabled(true);
+        // 支持检测串口
+        ui->portSearchBt->setEnabled(true);
     };
 }
 
@@ -671,4 +718,3 @@ void SerialPort::on_protocolComboBox_currentIndexChanged(int index)
         QMessageBox::warning(this, "功能未开放", "UDP功能未开放");
     }
 }
-

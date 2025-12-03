@@ -217,7 +217,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="ipInput"/>
+           <widget class="QLineEdit" name="ipInput">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QLabel" name="label_4">
@@ -227,7 +231,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="portInput"/>
+           <widget class="QLineEdit" name="portInput">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>

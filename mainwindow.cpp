@@ -65,6 +65,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(serialPort, &SerialPort::rosMapUpdated, visualizer, &ROSVisualizer::updateMap);
     connect(serialPort, &SerialPort::rosScanUpdated, visualizer, &ROSVisualizer::updateScan);
     connect(serialPort, &SerialPort::rosTfUpdated, visualizer, &ROSVisualizer::updateTf);
+    connect(serialPort, &SerialPort::requestClearVisualization, visualizer, &ROSVisualizer::clearVisualization);
 
     // ----------------------------------------------------------
     // 绑定槽函数——显示页面
