@@ -3,22 +3,23 @@
 #include <QDataStream>
 #include <QTimer>  // 添加定时器头文件
 
-// 把 11 字节串口坐标帧解析成字符串，失败返回空串
+// 10 字节帧 → 打印字符串
 static QString uartFrameToText(const QByteArray &fr)
 {
-    if (fr.size() != 11 || quint8(fr[0]) != 0xAA || quint8(fr[10]) != 0x0A)
+    if (fr.size() != 10 || quint8(fr[0]) != 0xAA || quint8(fr[9]) != 0x0A)
         return {};
 
-    auto readI16 = [&](int off) -> qint16 {
+    auto i16 = [&](int off) -> qint16 {
         return qFromBigEndian<qint16>(reinterpret_cast<const uchar*>(fr.constData() + off));
     };
-    qint16 x  = readI16(1);
-    qint16 y  = readI16(3);
-    qint16 z  = readI16(5);
-    qint16 yaw= readI16(7);
+    qint16 x  = i16(1);
+    qint16 y  = i16(3);
+    qint16 z  = i16(5);
+    qint16 yaw= i16(7);
 
-    return QStringLiteral("x=%1cm  y=%2cm  z=%3cm  yaw=%4°")
-        .arg(x).arg(y).arg(z).arg(yaw/10.0, 0, 'f', 1);
+    QString ts = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss >> 串口接收数据: ");
+    return ts + QStringLiteral("x=%1cm  y=%2cm  z=%3cm  yaw=%4°")
+                    .arg(x).arg(y).arg(z).arg(yaw/10.0, 0, 'f', 1);
 }
 
 // 初始化ui界面
@@ -220,22 +221,18 @@ void SerialPort::processReceivedData(const QByteArray &recBuf)
     ui->recvNum->setText(QString("接收字节数量： %1").arg(recvNum));
 
     if (isSerialPortConnected) {
-        /* ---------- 串口链路：直接打印 x/y/z/yaw ---------- */
         recvBuffer.append(recBuf);
-        while (recvBuffer.size() >= 11) {
+        while (recvBuffer.size() >= 10) {
             int head = recvBuffer.indexOf(char(0xAA));
-            if (head < 0 || recvBuffer.size() - head < 11) break;
-            QByteArray frame = recvBuffer.mid(head, 11);
-            if (quint8(frame[0]) != 0xAA || quint8(frame[10]) != 0x0A) {
-                recvBuffer.remove(head, 1);   // 帧头不对，丢掉 1 字节继续找
+            if (head < 0 || recvBuffer.size() - head < 10) break;
+            QByteArray frame = recvBuffer.mid(head, 10);
+            if (quint8(frame[0]) != 0xAA || quint8(frame[9]) != 0x0A) {
+                recvBuffer.remove(head, 1);
                 continue;
             }
-            recvBuffer.remove(head, 11);      // 扔掉整帧
+            recvBuffer.remove(head, 10);
             QString line = uartFrameToText(frame);
-            if (!line.isEmpty()) {
-                QString ts = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss >> 串口接收数据: ");
-                ui->recvEdit->append(ts + line);
-            }
+            if (!line.isEmpty()) ui->recvEdit->append(line);
         }
     } else {
         /* ---------- 网口链路：保持原 ROS-JSON 逻辑 ---------- */
@@ -491,8 +488,8 @@ void SerialPort::on_wifiConnectBt_clicked()
                 bool ok = true;
                 // quint16 port = ui->portInput->text().toUShort(&ok);
                 // 固定模块IP 端口
-                // QString ip = "10.42.0.1";
-                QString ip = "172.27.191.1";
+                QString ip = "10.42.0.1";
+                // QString ip = "172.27.191.1";
                 quint16 port = 6666;
 
 
