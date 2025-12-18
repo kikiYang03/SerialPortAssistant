@@ -10,6 +10,15 @@
 #include "tcpclient.h"  // 添加TCP客户端头文件
 #include "protocolhandler.h"
 
+// 定义参数数据
+struct Parameter {
+    QString id;
+    QString name;
+    QString range;
+    QString description;
+    int defaultValue;
+};
+
 namespace Ui {
 class Params;
 }
@@ -40,6 +49,7 @@ private:
     Ui::Params *ui;
     bool m_isGroupFolded;
     QList<QWidget*> valueWidgets;
+    static const QVector<Parameter> s_parameters;
     // SerialPort *m_serialPort;  // 通信接口指针
 
     QByteArray m_receiveBuffer;  // 数据接收缓冲区

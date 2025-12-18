@@ -4,6 +4,20 @@
 #include <QHBoxLayout>
 #include <QDebug>
 
+const QVector<Parameter> Params::s_parameters = {
+    {"0x00", "雷达型号", "0-1", "0=N10, 其他=N10_P", 0},
+    {"-", "雷达放置位置", "-", "雷达安装位置相对于机器人中心的位置，即tf树中：base_link->laser_link，坐标系遵循FLU（x为前，Y为左，Z为上）", 0},
+    {"0x01", "X坐标", "0-65535", "雷达位置X坐标值，单位厘米", 0},
+    {"0x02", "Y坐标", "0-65535", "雷达位置Y坐标值，单位厘米", 0},
+    {"0x03", "Z坐标", "0-65535", "雷达位置Z坐标值，单位厘米", 0},
+    {"0x04", "Roll角度", "0-360", "雷达滚转角，单位度", 0},
+    {"0x05", "Pitch角度", "0-360", "雷达俯仰角，单位度", 0},
+    {"0x06", "Yaw角度", "0-360", "雷达偏航角，单位度", 0},
+    {"0x10", "当前模式", "0-1", "0=建图模式,1=定位模式，保存地图后可以设置为定位模式，重启模块后则会调用保存的地图进行定位", 0},
+    {"0x11", "使能px4输出坐标", "0-1", "1=使能，模块可连接px4飞控用做位置传感器", 1},
+    {"0x12", "使能串口输出坐标", "0-1", "1=使能，模块可串口输出坐标", 1},
+    };
+
 Params::Params(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Params)
@@ -100,28 +114,7 @@ void Params::setupTable()
 
 void Params::setupParameters()
 {
-    // 定义参数数据
-    struct Parameter {
-        QString id;
-        QString name;
-        QString range;
-        QString description;
-        int defaultValue;
-    };
-
-    QVector<Parameter> parameters = {
-        {"0x00", "雷达型号", "0-1", "0=N10, 其他=N10_P", 0},
-        {"-", "雷达放置位置", "-", "雷达安装位置相对于机器人中心的位置，即tf树中：base_link->laser_link，坐标系遵循FLU（x为前，Y为左，Z为上）", 0},
-        {"0x01", "X坐标", "0-65535", "雷达位置X坐标值，单位厘米", 0},
-        {"0x02", "Y坐标", "0-65535", "雷达位置Y坐标值，单位厘米", 0},
-        {"0x03", "Z坐标", "0-65535", "雷达位置Z坐标值，单位厘米", 0},
-        {"0x04", "Roll角度", "0-360", "雷达滚转角，单位度", 0},
-        {"0x05", "Pitch角度", "0-360", "雷达俯仰角，单位度", 0},
-        {"0x06", "Yaw角度", "0-360", "雷达偏航角，单位度", 0},
-        {"0x10", "当前模式", "0-1", "0=建图模式,1=定位模式，保存地图后可以设置为定位模式，重启模块后则会调用保存的地图进行定位", 0},
-        {"0x11", "使能px4输出坐标", "0-1", "1=使能，模块可连接px4飞控用做位置传感器", 1},
-        {"0x12", "使能串口输出坐标", "0-1", "1=使能，模块可串口输出坐标", 1},
-    };
+    const QVector<Parameter>& parameters = s_parameters;
 
     // 设置行数
     ui->tableWidget->setRowCount(parameters.size());
@@ -530,16 +523,15 @@ void Params::updateTableFromWidgets()
 void Params::restoreDefaultValues()
 {
     for (int row = 0; row < valueWidgets.size(); ++row) {
-
-        QWidget *widget = valueWidgets[row];
+        QWidget *widget = valueWidgets.at(row);
         QLayout *layout = widget->layout();
-        if (layout && layout->count() > 0) {
-            QWidget *valueControl = layout->itemAt(0)->widget();
-            if (QComboBox *comboBox = qobject_cast<QComboBox*>(valueControl)) {
-                comboBox->setCurrentIndex(0); // 默认选择第一个
-            } else if (QSpinBox *spinBox = qobject_cast<QSpinBox*>(valueControl)) {
-                spinBox->setValue(0); // 默认值为0
-            }
+        if (!layout || layout->count() == 0) continue;
+
+        QWidget *valueControl = layout->itemAt(0)->widget();
+        if (QComboBox *comboBox = qobject_cast<QComboBox*>(valueControl)) {
+            comboBox->setCurrentIndex(0);          // 枚举类仍选第 0 项
+        } else if (QSpinBox *spinBox = qobject_cast<QSpinBox*>(valueControl)) {
+            spinBox->setValue(s_parameters.at(row).defaultValue); // 直接读表
         }
     }
 }
