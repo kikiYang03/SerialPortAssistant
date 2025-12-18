@@ -26,6 +26,7 @@ static QString uartFrameToText(const QByteArray &fr)
 SerialPort::SerialPort(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::SerialPort)
+    , m_reconnectWarningShown(false)
 {
     ui->setupUi(this);
 
@@ -73,18 +74,14 @@ SerialPort::SerialPort(QWidget *parent)
                 mapCount = 0;
             }
         } else {
-            ui->lblWifiState->setText("未连接");
+            ui->lblWifiState->setText("尝试自动重连");
             ui->lblWifiState->setStyleSheet("color:red");
-            ui->wifiConnectBt->setText("打开连接");
 
             // 停止统计定时器
             if (statsTimer->isActive()) {
                 statsTimer->stop();
             }
         }
-    });
-    connect(tcpClient, &TcpClient::connectionError, this, [this](const QString &errorString) {
-        QMessageBox::warning(this, "TCP错误", "连接失败！");
     });
 
     // 初始化WiFi UDP
@@ -125,6 +122,21 @@ SerialPort::SerialPort(QWidget *parent)
     statsTimer = new QTimer(this);
     statsTimer->setInterval(10000); // 10秒
     connect(statsTimer, &QTimer::timeout, this, &SerialPort::onStatsTimeout);
+
+    connect(tcpClient, &TcpClient::reconnectTimeout, this, [this](){
+        if (!m_reconnectWarningShown) {
+            QMessageBox::warning(this, "网络中断",
+                                 "信号较差，未能连接成功，\n"
+                                 "已停止自动重连，请检查网络后手动'打开连接'。");
+            m_reconnectWarningShown = true;
+
+            // 界面恢复成"断开"状态
+            ui->wifiConnectBt->setText("打开连接");
+            ui->lblWifiState->setText("未连接");
+            ui->lblWifiState->setStyleSheet("color:red");
+            ui->serialBox->setEnabled(true);
+        }
+    });
 
     elapsedTimer.start();
 }
@@ -480,6 +492,10 @@ void SerialPort::on_wifiConnectBt_clicked()
         on_clearRecvBt_clicked();
         // 清空地图
         emit requestClearVisualization();
+        // 先停止可能的重连
+        tcpClient->stopAutoReconnect();
+        // 重置'重连'警告标志
+        m_reconnectWarningShown = false;
         // 禁用串口通信方式
         ui->serialBox->setEnabled(false);
         if (protocol == "TCP"){
@@ -571,6 +587,7 @@ void SerialPort::on_wifiConnectBt_clicked()
         if (protocol == "TCP"){
             if (tcpClient->isConnected()){
                 tcpClient->disconnectFromHost();
+                tcpClient->stopAutoReconnect();
                 // 断开连接后按钮文本已经是"打开连接"
             }
         }else if(protocol == "UDP"){
@@ -620,13 +637,13 @@ void SerialPort::on_portSearchBt_clicked()
 // 打开串口
 void SerialPort::on_portOpenBt_clicked()
 {
-    qint32 baudRate = 921600;
+    // qint32 baudRate = 921600;
     QSerialPort::DataBits dataBits;
     QSerialPort::StopBits stopBits;
     QSerialPort::Parity checkBits;
 
-    // 设置默认波特率921600
-    // baudRate=QSerialPort::Baud115200;
+    // 设置默认波特率115200
+    qint32 baudRate=QSerialPort::Baud115200;
     // 设置默认数据位
     dataBits=QSerialPort::Data8;
     // 设置默认停止位

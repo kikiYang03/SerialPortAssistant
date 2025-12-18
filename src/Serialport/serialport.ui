@@ -158,7 +158,7 @@
         <item>
          <widget class="QLabel" name="lblPortState">
           <property name="text">
-           <string>串口功能未开放</string>
+           <string>串口待连接</string>
           </property>
          </widget>
         </item>

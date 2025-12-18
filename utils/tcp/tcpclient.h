@@ -30,6 +30,8 @@ public:
     void setConnectionStatus(bool connected);
     bool getConnectionStatus() const { return m_isConnected; }
 
+    void stopAutoReconnect();   // 完全停止重连
+
 signals:
     // 连接状态信号
     void connected();
@@ -41,6 +43,8 @@ signals:
 
     // 状态变化信号（供UI更新）
     void connectionStatusChanged(bool connected);
+    // 重连超时，通知 UI 层
+    void reconnectTimeout();
 
 public slots:
     void onReconnect();
@@ -67,6 +71,11 @@ private:
     quint16 m_serverPort;
     bool m_isConnected;
     bool m_autoReconnect;
+
+    // // 记录本次“断开”后累计重连耗时
+    // int m_reconnectElapsedMs;
+    int m_reconnectAttempts;  // 重连尝试次数
+    bool m_reconnecting ;   // 正在重连过程中
 };
 
 #endif // TCPCLIENT_H

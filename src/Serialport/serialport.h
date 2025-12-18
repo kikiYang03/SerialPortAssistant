@@ -157,6 +157,8 @@ private:
     QElapsedTimer elapsedTimer;
     void onStatsTimeout();
 
+    bool m_reconnectWarningShown = false;
+
 signals:
     void coordinatesUpdated(qint16 x, qint16 y, qint16 z, qint16 yaw);
 
