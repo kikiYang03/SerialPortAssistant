@@ -19,7 +19,7 @@ static QString uartFrameToText(const QByteArray &fr)
 
     QString ts = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss >> 串口接收数据: ");
     return ts + QStringLiteral("x=%1cm  y=%2cm  z=%3cm  yaw=%4°")
-                    .arg(x).arg(y).arg(z).arg(yaw/10.0, 0, 'f', 1);
+                    .arg(x).arg(y).arg(z).arg(double(yaw), 0, 'f', 1);
 }
 
 // 初始化ui界面
