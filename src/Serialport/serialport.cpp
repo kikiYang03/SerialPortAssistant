@@ -1,7 +1,8 @@
 ﻿#include "serialport.h"
 #include "ui_serialport.h"
+#include "utils/config/config.h"
 #include <QDataStream>
-#include <QTimer>  // 添加定时器头文件
+#include <QTimer>
 
 // 10 字节帧 → 打印字符串
 static QString uartFrameToText(const QByteArray &fr)
@@ -51,10 +52,12 @@ SerialPort::SerialPort(QWidget *parent)
     ui->protocolComboBox->addItem("TCP");
     ui->protocolComboBox->addItem("UDP");
 
+    QString ipText = Config::instance().value("Network/tcp_ip", "127.0.0.1").toString();
+    QString port = Config::instance().value("Network/tcp_port", "8088").toString();
     ui->ipInput->setEnabled(false);
-    ui->ipInput->setText("10.42.0.1");
+    ui->ipInput->setText(ipText);
     ui->portInput->setEnabled(false);
-    ui->portInput->setText("6666");
+    ui->portInput->setText(port);
     ui->protocolComboBox->setEnabled(false);
     TcpClient* tcpClient = TcpClient::getInstance();
     connect(tcpClient, &TcpClient::dataReceived, this, &SerialPort::processReceivedData);
@@ -501,12 +504,18 @@ void SerialPort::on_wifiConnectBt_clicked()
         if (protocol == "TCP"){
             if (!tcpClient->isConnected()) {
                 // QString ip = ui->ipInput->text();
-                bool ok = true;
                 // quint16 port = ui->portInput->text().toUShort(&ok);
                 // 固定模块IP 端口
-                QString ip = "10.42.0.1";
+                QString ipText = Config::instance().value("Network/tcp_ip", "127.0.0.1").toString();
+                bool ok = false;
+                quint16 port = Config::instance().value("Network/tcp_port", "6666").toString().toUShort(&ok);
+                if (!ok) {
+                    // 处理转换失败，例如使用默认值
+                    port = 6666;
+                }
+                // QString ip = "10.42.0.1";
                 // QString ip = "172.27.191.1";
-                quint16 port = 6666;
+                // quint16 port = 6666;
 
 
                 if (!ok || port == 0) {
@@ -515,10 +524,10 @@ void SerialPort::on_wifiConnectBt_clicked()
                     return;
                 }
 
-                qDebug() << "开始连接TCP..." << ip << ":" << port;
+                qDebug() << "开始连接TCP..." << ipText << ":" << port;
 
                 // 使用单例TCP客户端连接
-                if (tcpClient->connectToHost(ip, port)) {
+                if (tcpClient->connectToHost(ipText, port)) {
                     // 连接成功，等待连接建立信号
                     // 不要在这里立即修改按钮文本，等待连接成功的信号
                     qDebug() << "TCP连接请求已发送，等待连接结果...";

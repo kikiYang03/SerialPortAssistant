@@ -27,7 +27,8 @@ SOURCES += \
     src/Serialport/serialport.cpp \
     src/ROSVisualizer/rosvisualizer.cpp \
     utils/protocol/protocolhandler.cpp \
-    utils/tcp/tcpclient.cpp
+    utils/tcp/tcpclient.cpp \
+    utils/config/config.cpp
 
 HEADERS += \
     src/Coordinate/coordinate.h \
@@ -37,7 +38,8 @@ HEADERS += \
     stdafx.h \
     src/ROSVisualizer/rosvisualizer.h \
     utils/protocol/protocolhandler.h \
-    utils/tcp/tcpclient.h
+    utils/tcp/tcpclient.h \
+    utils/config/config.h
 
 FORMS += \
     form.ui \
@@ -57,4 +59,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     resource.qrc
 
+CONFIG += file_copies
+COPIES += ini
+ini.files = $$PWD/config/config.ini
+ini.path   = $$OUT_PWD
 
