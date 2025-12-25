@@ -33,7 +33,7 @@ public:
     Coordinate * coordinate;
     Params * params;
     ROSVisualizer * visualizer;
-    ROSVisualizer3D * visualizer3d;
+    // ROSVisualizer3D * visualizer3d;
 
 
 private:
