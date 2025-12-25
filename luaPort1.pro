@@ -16,6 +16,7 @@ INCLUDEPATH += $$PWD/src/Coordinate
 INCLUDEPATH += $$PWD/src/Params
 INCLUDEPATH += $$PWD/src/Serialport
 INCLUDEPATH += $$PWD/src/ROSVisualizer
+INCLUDEPATH += $$PWD/src/ROSVisualizer3D
 INCLUDEPATH += $$PWD/utils/tcp
 INCLUDEPATH += $$PWD/utils/protocol
 
@@ -24,6 +25,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     src/Params/params.cpp \
+    src/ROSVisualizer3D/rosvisualizer3d.cpp \
     src/Serialport/serialport.cpp \
     src/ROSVisualizer/rosvisualizer.cpp \
     utils/protocol/protocolhandler.cpp \
@@ -34,6 +36,7 @@ HEADERS += \
     src/Coordinate/coordinate.h \
     mainwindow.h \
     src/Params/params.h \
+    src/ROSVisualizer3D/rosvisualizer3d.h \
     src/Serialport/serialport.h \
     stdafx.h \
     src/ROSVisualizer/rosvisualizer.h \
@@ -46,6 +49,7 @@ FORMS += \
     src/Coordinate/coordinate.ui \
     mainwindow.ui \
     src/Params/params.ui \
+    src/ROSVisualizer3D/rosvisualizer3d.ui \
     src/Serialport/serialport.ui \
     src/ROSVisualizer/rosvisualizer.ui
 

@@ -458,6 +458,7 @@ void Params::on_writeButton_clicked()
     if (writeCount > 0) {
         // QMessageBox::information(this, "写入参数",
         //                          QString("正在将 %1 个参数写入模块...\n写入操作无响应确认。").arg(writeCount));
+        QMessageBox::information(this, "写入参数", QString("请断电重启确保参数生效"));
         ui->optLabel->setText("写入参数");
         ui->optLabel->setStyleSheet("color: blue;");
     } else {
@@ -494,7 +495,7 @@ void Params::on_defaultButton_clicked()
     emit appendMessage(timestamp + "恢复参数默认值");
     ui->optLabel->setText("恢复参数默认值");
     ui->optLabel->setStyleSheet("color: blue;");
-    QMessageBox::information(this, "恢复默认", "正在恢复参数的默认值...");
+    QMessageBox::information(this, "恢复默认", "上位机已恢复默认参数，需写入参数");
 }
 
 // 写入参数

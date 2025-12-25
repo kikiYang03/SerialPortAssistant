@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     // coordinate = new Coordinate;
     params = new Params;
     visualizer = new ROSVisualizer;
+    visualizer3d = new ROSVisualizer3D;
 
 
     // 添加子页面
@@ -18,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     // ui->stackedWidget->addWidget(coordinate);
     ui->stackedWidget->addWidget(params);
     ui->stackedWidget->addWidget(visualizer);
+    ui->stackedWidget->addWidget(visualizer3d);
     // qDebug() << "current index:" << ui->stackedWidget->count();
 
     // 设置当前页面
@@ -43,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent)
     // QAction *OpenAction = fileMenu->addAction("坐标展示");
     QAction *ReadAction = fileMenu->addAction("参数设置");
     QAction *RosAction = fileMenu->addAction("可视化");
+    QAction *Ros3DAction = fileMenu->addAction("3D可视化");
 
     // 创建工具栏
     QToolBar *toolBar = new QToolBar(this);
@@ -53,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent)
     // toolBar->addAction(OpenAction);
     toolBar->addAction(ReadAction);
     toolBar->addAction(RosAction);
+    toolBar->addAction(Ros3DAction);
 
     // 设置禁止移动属性,工具栏默认贴在上方
     toolBar->setFloatable(false);
@@ -81,6 +85,9 @@ MainWindow::MainWindow(QWidget *parent)
     });
     connect(RosAction,&QAction::triggered,this,[=](){
         ui->stackedWidget->setCurrentIndex(2);
+    });
+    connect(Ros3DAction,&QAction::triggered,this,[=](){
+        ui->stackedWidget->setCurrentIndex(3);
     });
 
     // 连接Params的消息信号到SerialPort的显示槽
